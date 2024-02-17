@@ -1,7 +1,5 @@
 package app;
 
-import exceptions.ElementoJaExisteException;
-import exceptions.ElementoNaoExisteException;
 import exceptions.NaoPossuiTicketDisponivelException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -14,12 +12,10 @@ import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import models.Estudante;
 import models.Funcionario;
-import models.TicketRefeicao;
 import models.TipoRefeicao;
 import negocio.Controlador;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Random;
 

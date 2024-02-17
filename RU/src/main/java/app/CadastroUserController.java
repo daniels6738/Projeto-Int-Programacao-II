@@ -14,7 +14,6 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 import models.Estudante;
 import models.Funcionario;
-import models.Usuario;
 import negocio.Controlador;
 
 import java.io.IOException;

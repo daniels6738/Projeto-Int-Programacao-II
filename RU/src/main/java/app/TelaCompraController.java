@@ -9,17 +9,14 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import models.Estudante;
 import models.Funcionario;
-import models.TicketRefeicao;
 import models.TipoRefeicao;
 import negocio.Controlador;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Random;
 

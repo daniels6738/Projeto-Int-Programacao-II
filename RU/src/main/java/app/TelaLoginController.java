@@ -13,7 +13,6 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import models.Estudante;
-import models.Usuario;
 import negocio.Controlador;
 
 import java.io.IOException;

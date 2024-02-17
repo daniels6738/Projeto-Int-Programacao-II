@@ -1,7 +1,5 @@
 package app;
 
-import exceptions.DataInvalidaException;
-import exceptions.ElementoJaExisteException;
 import exceptions.ElementoNaoExisteException;
 import exceptions.ParametroVazioException;
 import javafx.collections.FXCollections;
@@ -23,7 +21,6 @@ import models.TipoRefeicao;
 import negocio.Controlador;
 
 import java.io.IOException;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;

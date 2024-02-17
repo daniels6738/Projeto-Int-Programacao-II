@@ -10,7 +10,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.stage.Stage;
-import models.Funcionario;
 import negocio.Controlador;
 
 import java.io.IOException;

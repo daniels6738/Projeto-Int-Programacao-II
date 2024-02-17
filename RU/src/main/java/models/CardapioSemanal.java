@@ -1,11 +1,8 @@
 package models;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.Objects;
-
-import exceptions.DataInvalidaException;
 
 public class CardapioSemanal {
 	
