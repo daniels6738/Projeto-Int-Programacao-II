@@ -15,7 +15,7 @@ import java.time.LocalDate;
 public class Aplicativo extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(Aplicativo.class.getResource("Login.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(this.getClass().getResource("Login.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("Login");
         stage.setScene(scene);
