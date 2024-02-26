@@ -19,11 +19,11 @@ router.use('/relatorio', relatorioRouter);
 
 
 //usuario
-//usuarioRouter.get('/listar', usuarioController.getAll);
+usuarioRouter.get('/listar', usuarioController.getAll);
 usuarioRouter.post('/login', usuarioMiddleware.validateBodyLogin, usuarioController.signIn);
-//usuarioRouter.post('/cadastro', usuarioMiddleware.validateBodyCadastro, usuarioController.sigUp);
-//usuarioRouter.get('/busca',usuarioMiddleware.verifyJTW,usuarioController.buscarUsuario);
-//usuarioRouter.delete('/excluir',usuarioController.excluirUsuario);
+usuarioRouter.post('/cadastro', usuarioMiddleware.validateBodyCadastro, usuarioController.sigUp);
+usuarioRouter.get('/busca',usuarioMiddleware.verifyJTW,usuarioController.buscarUsuario);
+usuarioRouter.delete('/excluir',usuarioController.excluirUsuario);
 
 
 
