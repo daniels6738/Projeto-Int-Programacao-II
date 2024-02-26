@@ -16,8 +16,9 @@ router.use('/usuario', usuarioRouter);
 usuarioRouter.get('/listar', usuarioController.getAll);
 usuarioRouter.post('/login', usuarioMiddleware.validateBodyLogin, usuarioController.sigIn);
 usuarioRouter.post('/cadastro', usuarioMiddleware.validateBodyCadastro, usuarioController.sigUp);
-usuarioRouter.get('/busca',usuarioMiddleware.verifyJTW,usuarioController.buscarUsuario);
-
+usuarioRouter.post('/busca',usuarioMiddleware.verifyJTW,usuarioController.buscarUsuario);
+usuarioRouter.post('/editar',usuarioController.ediUser);
+usuarioRouter.post('/excluir',usuarioController.deleteUser);
 
 
 
