@@ -8,7 +8,7 @@ def conectar_bd():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="didinho",
+        password="lLAWLIET0",
         database="testeTicket"
     )
 
@@ -101,4 +101,4 @@ def consumir():
         return jsonify({"mensagem": "Nenhum ticket disponível para consumo"}), 404
 
 if __name__ == '__main__':
-    app.run(debug=True, port=3330)
+    app.run(debug=True, port=3333)

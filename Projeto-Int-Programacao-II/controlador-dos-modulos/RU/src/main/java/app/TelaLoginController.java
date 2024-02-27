@@ -53,7 +53,7 @@ public class TelaLoginController {
 
         // Cria a requisição HTTP para a rota de login da API
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:3332/usuario/login"))
+                .uri(URI.create("http://localhost:3330/usuario/login"))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString("{\"cpf\": \"" + cpf + "\", \"senha\": \"" + senha + "\"}"))
                 .build();
