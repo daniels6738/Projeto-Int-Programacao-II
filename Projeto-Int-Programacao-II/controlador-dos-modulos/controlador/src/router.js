@@ -2,6 +2,7 @@ const express = require('express');
 const usuarioController = require('./controllers/usuarioController');
 const usuarioMiddleware = require('./middleweres/usuarioMiddleware');
 const ticketController = require('./controllers/ticketController');
+const relatorioController = require('./controllers/relatorioController');
 
 //const lojaController = require('./controllers/lojaController');
 
@@ -33,6 +34,9 @@ ticketRounter.post('/consumir',ticketController.consumir);
 ticketRounter.get('/listar',ticketController.listar);
 
 
+//relatorio
+relatorioRouter.post('/vendidos', relatorioController.vendidos);
+relatorioRouter.post('/consumidos', relatorioController.consumidos );
 
 
 
