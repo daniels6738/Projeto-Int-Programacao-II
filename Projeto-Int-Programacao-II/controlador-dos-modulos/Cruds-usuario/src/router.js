@@ -2,7 +2,6 @@ const express = require('express');
 const usuarioController = require('./controllers/usuarioController');
 const usuarioMiddleware = require('./middleweres/usuarioMiddleware');
 
-const lojaController = require('./controllers/lojaController');
 
 const router = express.Router();
 
