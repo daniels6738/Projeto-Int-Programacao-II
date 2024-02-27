@@ -3,6 +3,7 @@ const usuarioController = require('./controllers/usuarioController');
 const usuarioMiddleware = require('./middleweres/usuarioMiddleware');
 const ticketController = require('./controllers/ticketController');
 const relatorioController = require('./controllers/relatorioController');
+const cardapioController = require('./controllers/cardapioController');
 
 //const lojaController = require('./controllers/lojaController');
 
@@ -37,6 +38,14 @@ ticketRounter.get('/listar',ticketController.listar);
 //relatorio
 relatorioRouter.post('/vendidos', relatorioController.vendidos);
 relatorioRouter.post('/consumidos', relatorioController.consumidos );
+
+
+//cardapio
+cardapioRouter.post('/cadastrarOpcao', cardapioController.cadastrar_opcao);
+cardapioRouter.post('/buscarOpcao', cardapioController.buscar_opcao);
+cardapioRouter.post('/editarOpcao', cardapioController.editar_opcao);
+cardapioRouter.post('/cadastrar', cardapioController.cadastrar_cardapio);
+cardapioRouter.post('/buscar', cardapioController.buscar_cardapio);
 
 
 
