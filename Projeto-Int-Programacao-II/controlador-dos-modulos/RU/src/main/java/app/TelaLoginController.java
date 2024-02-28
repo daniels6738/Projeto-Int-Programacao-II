@@ -13,6 +13,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import models.Estudante;
 import negocio.Controlador;
+import negocio.UserAtual;
 
 import java.io.IOException;
 import java.net.URI;
@@ -76,9 +77,11 @@ public class TelaLoginController {
                 if (response.body().contains("estudante")) {
                     
                     root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("TelaAluno.fxml")));
+                    UserAtual.getInstance().setCpf(cpf);
                 } else {
                     //chamada da tela funcionario (assim funciona porem não chama a tela)
                     root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("TelaFuncionario.fxml")));
+                    UserAtual.getInstance().setCpf(cpf);
                  //desse modo é para passar o parametro para saber o usuario
                    /*  
                    FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource("TelaFuncionario.fxml")));
