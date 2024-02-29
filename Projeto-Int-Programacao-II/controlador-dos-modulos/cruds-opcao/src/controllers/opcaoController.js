@@ -1,5 +1,4 @@
 const opcaoModel = require('../models/opcaoModel');
-const moment = require('moment');
 
 
 

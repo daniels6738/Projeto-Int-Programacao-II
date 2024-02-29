@@ -4,7 +4,7 @@ const usuarioMiddleware = require('./middleweres/usuarioMiddleware');
 const ticketController = require('./controllers/ticketController');
 const relatorioController = require('./controllers/relatorioController');
 const cardapioController = require('./controllers/cardapioController');
-const opcaoController = require("./controllers/opcaoController");
+const opcaoController = require('./controllers/opcaoController');
 
 //const lojaController = require('./controllers/lojaController');
 

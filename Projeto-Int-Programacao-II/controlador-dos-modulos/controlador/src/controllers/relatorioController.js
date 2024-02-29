@@ -12,4 +12,4 @@ const consumidos = async (req,res) => {
 module.exports = {
     vendidos,
     consumidos
-}
+};

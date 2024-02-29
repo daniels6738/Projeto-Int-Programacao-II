@@ -15,7 +15,7 @@ const cadastrar_opcao = async (opcao1, opcao2, vegana, fast_grill, suco, sobreme
 
         return codigoOpcaoInserida;
     } catch (error) {
-        console.error("Erro ao cadastrar opção de refeição:", error);
+        console.error('Erro ao cadastrar opção de refeição:', error);
         throw error;
     }
 };
@@ -25,11 +25,11 @@ const buscar_opcao = async (codigoOpcao) => {
         const query = 'SELECT * FROM opcao_refeicao WHERE codigo_opcao = ?';
         const [opcoes] = await connection.execute(query, [codigoOpcao]);
         if(opcoes.length ===0){
-            return{erro:"opção não existe"};
+            return{erro:'opção não existe'};
         }
         return opcoes;
     } catch (error) {
-        console.error("Erro ao buscar opção de refeição:", error);
+        console.error('Erro ao buscar opção de refeição:', error);
         throw error;
     }
 };
@@ -48,7 +48,7 @@ const editar_opcao = async (codigo, opcao1, opcao2, vegana, fast_grill, suco, so
         
         return {mensagem :'Opção de refeição editada com sucesso.'};
     } catch (error) {
-        console.error("Erro ao editar opção de refeição:", error);
+        console.error('Erro ao editar opção de refeição:', error);
         throw error;
     }
 };
@@ -61,4 +61,4 @@ module.exports ={
     cadastrar_opcao,
     buscar_opcao,
     editar_opcao
-}
+};

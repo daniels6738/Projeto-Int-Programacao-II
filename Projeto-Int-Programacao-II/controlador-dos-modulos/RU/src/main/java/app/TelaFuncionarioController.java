@@ -63,9 +63,9 @@ public class TelaFuncionarioController {
     
             // Requisição para obter a quantidade de almoços não consumidos
             HttpRequest requestAlmoco = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:3333/ticket/naoConsumidos"))
+                    .uri(URI.create("http://localhost:3333/ticket/noaConsumidos"))
                     .header("Content-Type", "application/json")
-                    .POST(HttpRequest.BodyPublishers.ofString("{\"usuario\": \"" + cpf + "\", \"tipo\": \"almoço\"}"))
+                    .POST(HttpRequest.BodyPublishers.ofString("{\"usuario\": \"" + cpf + "\", \"tipo\": \"almoco\"}"))
                     .build();
     
             // Envia a requisição e obtém a resposta
@@ -82,7 +82,7 @@ public class TelaFuncionarioController {
     
             // Requisição para obter a quantidade de jantas não consumidas
             HttpRequest requestJanta = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:3333/ticket/naoConsumidos"))
+                    .uri(URI.create("http://localhost:3333/ticket/noaConsumidos"))
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString("{\"usuario\": \"" + cpf + "\", \"tipo\": \"janta\"}"))
                     .build();
