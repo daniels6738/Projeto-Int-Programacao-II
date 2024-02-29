@@ -21,27 +21,27 @@ const buscarUsuario = async (cpf) =>{
         const usuario = usuarios[0];
         
         //verifica se o usuario é aluno
-        var query = 'SELECT * FROM estudante WHERE cpf = ?';
+        query = 'SELECT * FROM estudante WHERE cpf = ?';
         const [estudante] = await connection.execute(query,[cpf]);
 
-         //verifica se o usuario é funcionario
-         var query = 'SELECT * FROM funcionario WHERE cpf = ?';
-         const [funcionario] = await connection.execute(query,[cpf]);
+        //verifica se o usuario é funcionario
+        query = 'SELECT * FROM funcionario WHERE cpf = ?';
+        const [funcionario] = await connection.execute(query,[cpf]);
 
-         if(estudante.length >0){
-            return {...usuario, tipo: "estudante", matricula: estudante[0].matricula};
-         } else {
-            return {...usuario, tipo: "funcionario", salario:funcionario[0].salario, data_admin:funcionario[0].data_admin};
-         } 
+        if(estudante.length >0){
+            return {...usuario, tipo: 'estudante', matricula: estudante[0].matricula};
+        } else {
+            return {...usuario, tipo: 'funcionario', salario:funcionario[0].salario, data_admin:funcionario[0].data_admin};
+        } 
 
-      } else {
+    } else {
         return null;
-      }
+    }
 };
 
 
 
-const sigIn = async (usuario, res) => {
+const sigIn = async (usuario) => {
     const { cpf, senha } = usuario;
 
     const [usuarioExiste] = await connection.execute('SELECT * FROM usuario WHERE cpf = ?', [cpf]);
@@ -54,14 +54,14 @@ const sigIn = async (usuario, res) => {
         return { mensagem: 'Usuário e/ou senha inválidos' };
     }
 
-    var usuario = { ...usuarioExiste[0] };
+    usuario = { ...usuarioExiste[0] };
 
     var query = 'SELECT * FROM estudante WHERE cpf = ?';
     const [estudante] = await connection.execute(query, [cpf]);
     if (estudante.length > 0) {
-        return { usuario, tipo: "estudante" };
+        return { usuario, tipo: 'estudante' };
     }
-    return { usuario, tipo: "funcionario" };
+    return { usuario, tipo: 'funcionario' };
 };
 
 

@@ -8,22 +8,22 @@ def conectar_bd():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="lLAWLIET0",
-        database="testeTicket"
+        password="didinho",
+        database="ru"
     )
 
 # Rota para comprar ticket
 @app.route('/ticket/comprar', methods=['POST'])
 
 def comprar_ticket():
-    print("entrou 1");
+    print("entrou 1")
 
     req_data = request.get_json()
-    print("entrou 2");
+    print("entrou 2")
     tipo = req_data['tipo']
-    print("entrou 3");
+    print("entrou 3")
     usuario = req_data['usuario']
-    print("entrou 4");
+    print("entrou 4")
     # Conectar ao banco de dados
     conn = conectar_bd()
     cursor = conn.cursor()
@@ -46,7 +46,7 @@ def comprar_ticket():
 
 
 
-# Rota para comprar ticket
+# Rota para listar tickets
 @app.route('/ticket/listar', methods=['GET'])
 
 def listar_ticket():
@@ -79,14 +79,15 @@ def listar_ticket():
 def consumir():
     req_data = request.get_json()
     usuario = req_data['usuario']
+    tipo = req_data['tipo']
 
     # Conectar ao banco de dados
     conn = conectar_bd()
-    cursor = conn.cursor()
+    cursor = conn.cursor(buffered=True)
 
     # Verificar se o usuário possui um ticket a ser consumido
-    query = "SELECT * FROM ticket_refeicao WHERE usuario = %s AND data_consumo IS NULL"
-    cursor.execute(query, (usuario,))
+    query = "SELECT * FROM ticket_refeicao WHERE usuario = %s AND tipo = %s AND data_consumo IS NULL"
+    cursor.execute(query, (usuario, tipo))
     result = cursor.fetchone()
 
     if result:
@@ -98,7 +99,7 @@ def consumir():
         return jsonify({"mensagem": "Ticket consumido com sucesso"}), 200
     else:
         conn.close()
-        return jsonify({"mensagem": "Nenhum ticket disponível para consumo"}), 404
+        return jsonify({"mensagem": "Nenhum ticket disponível para consumo"}), 201
 
 if __name__ == '__main__':
     app.run(debug=True, port=3333)

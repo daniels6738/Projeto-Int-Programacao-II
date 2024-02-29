@@ -11,14 +11,14 @@ const getAll = async (req,res) => {
 
 const sigIn = async (req,res) => {
     
-        const usuario = await usuarioModel.sigIn(req.body, res);
+    const usuario = await usuarioModel.sigIn(req.body, res);
         
-        if ('mensagem' in usuario) {
-            return res.status(400).json({ mensagem: usuario.mensagem });
-        } else {
-            return res.status(200).json(usuario);
-        }
-    };
+    if ('mensagem' in usuario) {
+        return res.status(201).json({ mensagem: usuario.mensagem });
+    } else {
+        return res.status(200).json(usuario);
+    }
+};
 
 
 const sigUp = async (req,res) => {
@@ -26,9 +26,9 @@ const sigUp = async (req,res) => {
     const usuario = await usuarioModel.sigUp(req.body,res);
     
     if('erro' in usuario)
-        return res.status(401).json({mensagem: usuario.erro});
+        return res.status(201).json({mensagem: usuario.erro});
     else
-        return res.status(200).json(usuario)
+        return res.status(200).json(usuario);
 };
 
 const buscarUsuario = async (req,res) => {
@@ -36,7 +36,7 @@ const buscarUsuario = async (req,res) => {
     if(busca != null){
         return res.status(200).json(busca);
     } else {
-        return res.status(401).json({mensagem:'usuario nao existe'})
+        return res.status(201).json({mensagem:'usuario nao existe'});
     }
     
 };
@@ -44,7 +44,7 @@ const buscarUsuario = async (req,res) => {
 const deleteUser = async (req,res) => {
     const usuario = await usuarioModel.deleteUser(req.body.cpf);
     if('erro' in usuario)
-         return res.status(401).json({mensagem:usuario.erro});
+        return res.status(201).json({mensagem:usuario.erro});
     else
         return res.status(200).json(usuario);
 };
@@ -52,7 +52,7 @@ const deleteUser = async (req,res) => {
 const ediUser = async (req,res) => {
     const usuario = await usuarioModel.ediUser(req.body);
     if('erro' in usuario){
-        return res.status(401).json({mensagem: usuario.erro});
+        return res.status(201).json({mensagem: usuario.erro});
     } else {
         return res.status(200).json(usuario);
     }

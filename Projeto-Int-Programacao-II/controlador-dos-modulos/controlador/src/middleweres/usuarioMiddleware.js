@@ -3,7 +3,7 @@ require('dotenv').config();
 
 const verifyJTW = (req,res,next) => {
     const token = req.headers['authorization'];
-    console.log("entrou");
+    console.log('entrou');
     jwt.verify(token,process.env.JTW_KEY,(err, decoded)=>{
         console.log("dentro do verify");
         console.log(decoded);
