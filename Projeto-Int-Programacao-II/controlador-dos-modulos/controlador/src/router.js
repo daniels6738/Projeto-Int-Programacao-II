@@ -13,11 +13,13 @@ const usuarioRouter = express.Router();
 const ticketRounter = express.Router();
 const cardapioRouter = express.Router();
 const relatorioRouter = express.Router();
+const opcaoRouter = express.Router();
 
 router.use('/usuario', usuarioRouter);
 router.use('/ticket', ticketRounter);
 router.use('/cardapio', cardapioRouter);
 router.use('/relatorio', relatorioRouter);
+router.use('/opcao',opcaoRouter);
 
 
 
@@ -42,12 +44,12 @@ relatorioRouter.post('/consumidos', relatorioController.consumidos );
 
 
 //cardapio
-cardapioRouter.post('/cadastrarOpcao', cardapioController.cadastrar_opcao);
-cardapioRouter.post('/buscarOpcao', cardapioController.buscar_opcao);
-cardapioRouter.post('/editarOpcao', cardapioController.editar_opcao);
 cardapioRouter.post('/cadastrar', cardapioController.cadastrar_cardapio);
 cardapioRouter.post('/buscar', cardapioController.buscar_cardapio);
 
-
+//opção
+opcaoRouter.post('/cadastrarOpcao', opcaoController.cadastrar_opcao);
+opcaoRouter.post('/buscarOpcao', opcaoController.buscar_opcao);
+opcaoRouter.post('/editarOpcao', opcaoController.editar_opcao);
 
 module.exports = router;
