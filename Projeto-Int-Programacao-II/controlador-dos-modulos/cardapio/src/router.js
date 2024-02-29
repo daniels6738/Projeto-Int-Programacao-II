@@ -11,12 +11,9 @@ router.use('/cardapio', cardapioRouter);
 
 
 //cardapio
-cardapioRouter.post('/cadastrarOpcao', cardapioController.cadastrar_opcao);
-cardapioRouter.post('/buscarOpcao', cardapioController.buscar_opcao);
-cardapioRouter.post('/editarOpcao', cardapioController.editar_opcao);
 cardapioRouter.post('/cadastrar', cardapioController.cadastrar_cardapio);
 cardapioRouter.post('/buscar', cardapioController.buscar_cardapio);
-
+cardapioRouter.post('/editar', cardapioController.editar_cardapio);
 
 
 

@@ -50,56 +50,60 @@ public class TelaFuncionarioController {
     @FXML
     MenuButton menuBtn;
 
+
     @FXML
     protected void initialize() {
+        // Exibe a mensagem de boas-vindas com o nome do usuário
+        labelBemvindo.setText("Bem-vindo, " + UserAtual.getInstance().getNome());
+    
+        // Faz uma requisição para obter a quantidade de almoços não consumidos
         try {
-            String cpf = UserAtual.getInstance().getCpf();
-            String tipoAlmoco = "almoço";
-            String tipoJanta = "janta";
-    
-            // Cria um cliente HTTP
             HttpClient client = HttpClient.newHttpClient();
-            
-            // Requisição para almoço não consumido
+            String cpf = UserAtual.getInstance().getCpf();
+    
+            // Requisição para obter a quantidade de almoços não consumidos
             HttpRequest requestAlmoco = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:3330/ticket/listar/naoConsumidos"))
+                    .uri(URI.create("http://localhost:3333/ticket/naoConsumidos"))
                     .header("Content-Type", "application/json")
-                    .POST(HttpRequest.BodyPublishers.ofString("{\"usuario\": \"" + cpf + "\", \"tipo\": \"" + tipoAlmoco + "\"}"))
-                    .build();
-            
-            // Requisição para janta não consumida
-            HttpRequest requestJanta = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:3330/ticket/listar/naoConsumidos"))
-                    .header("Content-Type", "application/json")
-                    .POST(HttpRequest.BodyPublishers.ofString("{\"usuario\": \"" + cpf + "\", \"tipo\": \"" + tipoJanta + "\"}"))
+                    .POST(HttpRequest.BodyPublishers.ofString("{\"usuario\": \"" + cpf + "\", \"tipo\": \"almoço\"}"))
                     .build();
     
-            // Envia a requisição para a API e obtém a resposta para o almoço
+            // Envia a requisição e obtém a resposta
             HttpResponse<String> responseAlmoco = client.send(requestAlmoco, HttpResponse.BodyHandlers.ofString());
-            // Verifica se a resposta da API indica um login válido para o almoço
+    
+            // Verifica se a resposta foi bem-sucedida e atualiza o label com a quantidade de almoços não consumidos
             if (responseAlmoco.statusCode() == 200) {
-                // Converta a string do corpo da requisição em um objeto JSONObject para o almoço
                 JSONObject jsonObjectAlmoco = new JSONObject(responseAlmoco.body());
-                String totalAlmoco = jsonObjectAlmoco.getString("total");
-    
-                labelBemvindo.setText(labelBemvindo.getText() + UserAtual.getInstance().getNome());
-                labelQtdAlmoco.setText(labelQtdAlmoco.getText() + totalAlmoco);
+                int qtdAlmoco = jsonObjectAlmoco.getInt("total");
+                labelQtdAlmoco.setText("Almoços não consumidos: " + qtdAlmoco);
+            } else {
+                labelQtdAlmoco.setText("Erro ao obter quantidade de almoços não consumidos");
             }
     
-            // Envia a requisição para a API e obtém a resposta para a janta
+            // Requisição para obter a quantidade de jantas não consumidas
+            HttpRequest requestJanta = HttpRequest.newBuilder()
+                    .uri(URI.create("http://localhost:3333/ticket/naoConsumidos"))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString("{\"usuario\": \"" + cpf + "\", \"tipo\": \"janta\"}"))
+                    .build();
+    
+            // Envia a requisição e obtém a resposta
             HttpResponse<String> responseJanta = client.send(requestJanta, HttpResponse.BodyHandlers.ofString());
-            // Verifica se a resposta da API indica um login válido para a janta
-            if (responseJanta.statusCode() == 200) {
-                // Converta a string do corpo da requisição em um objeto JSONObject para a janta
-                JSONObject jsonObjectJanta = new JSONObject(responseJanta.body());
-                String totalJanta = jsonObjectJanta.getString("total");
     
-                labelQtdJantar.setText(labelQtdJantar.getText() + totalJanta);
+            // Verifica se a resposta foi bem-sucedida e atualiza o label com a quantidade de jantas não consumidas
+            if (responseJanta.statusCode() == 200) {
+                JSONObject jsonObjectJanta = new JSONObject(responseJanta.body());
+                int qtdJanta = jsonObjectJanta.getInt("total");
+                labelQtdAlmoco.setText("Jantas não consumidas: " + qtdJanta);
+            } else {
+                labelQtdJantar.setText("Erro ao obter quantidade de jantas não consumidas");
             }
+    
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }
+    
 
     @FXML
     protected void botaoComprarApertar(ActionEvent event) throws IOException {

@@ -2,23 +2,30 @@ package app;
 
 import exceptions.DataInvalidaException;
 import exceptions.PeriodoInvalidoException;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.stage.Stage;
 import negocio.Controlador;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class TelaRelatorioController {
 
@@ -26,32 +33,29 @@ public class TelaRelatorioController {
     private Scene scene;
     private Parent root;
 
-    //@FXML
-    //private Label relatorio;
+    @FXML
+    private TableView<List<List<String>>> tbVendas;
 
     @FXML
-    private TableView<List<List<SimpleStringProperty>>> tbVendas;
+    private TableColumn<List<List<String>>, String> clnAlmocoV;
 
     @FXML
-    private TableColumn<List<List<SimpleStringProperty>>,String> clnAlmocoV;
+    private TableColumn<List<List<String>>, String> clnJantarV;
 
     @FXML
-    private TableColumn<List<List<SimpleStringProperty>>,String> clnJantarV;
+    private TableColumn<List<List<String>>, String> clnDataV;
 
     @FXML
-    private TableColumn<List<List<SimpleStringProperty>>,String> clnDataV;
+    private TableView<List<List<String>>> tbConsumo;
 
     @FXML
-    private TableView<List<List<SimpleStringProperty>>> tbConsumo;
+    private TableColumn<List<List<String>>, String> clnAlmocoC;
 
     @FXML
-    private TableColumn<List<List<SimpleStringProperty>>,String> clnAlmocoC;
+    private TableColumn<List<List<String>>, String> clnJantarC;
 
     @FXML
-    private TableColumn<List<List<SimpleStringProperty>>,String> clnJantarC;
-
-    @FXML
-    private TableColumn<List<List<SimpleStringProperty>>,String> clnDataC;
+    private TableColumn<List<List<String>>, String> clnDataC;
 
     @FXML
     private DatePicker dtInicioV;
@@ -65,9 +69,8 @@ public class TelaRelatorioController {
     @FXML
     private DatePicker dtFimC;
 
-
     @FXML
-    protected void initialize(){
+    protected void initialize() {
         dtInicioV.setValue(LocalDate.now());
         dtFimV.setValue(LocalDate.now());
         dtInicioC.setValue(LocalDate.now());
@@ -75,101 +78,93 @@ public class TelaRelatorioController {
     }
 
     @FXML
-    protected void btnRelatorioV(){
-        LocalDate inicio=dtInicioV.getValue();
-        LocalDate fim=dtFimV.getValue();
-        DateTimeFormatter form= DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        try{
-            LocalDate data=inicio;
-            Map<LocalDate,Integer> mapaAlmoco=Controlador.getInstance().relatorioVendasAlmoco(inicio,fim);
-            Map<LocalDate,Integer> mapaJantar=Controlador.getInstance().relatorioVendasJantar(inicio,fim);
-            ObservableList<List<List<SimpleStringProperty>>> vendas = FXCollections.observableArrayList();
+    protected void btnRelatorioV() {
+        LocalDate inicio = dtInicioV.getValue();
+        LocalDate fim = dtFimV.getValue();
+        DateTimeFormatter form = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
+        try {
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create("http://localhost:3330/relatorio/venda"))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString("{\"inicio\": \"" + inicio + "\", \"fim\": \"" + fim + "\"}"))
+                    .build();
 
-            while(!data.isAfter(fim)) {
-                int qntAlmoco=mapaAlmoco.getOrDefault(data,0);
-                int qntJanta=mapaJantar.getOrDefault(data,0);
-                if(qntAlmoco!=0 || qntJanta!=0) {
-                    List<List<SimpleStringProperty>>linha=new ArrayList<>();
-                    List<SimpleStringProperty> valores=new ArrayList<>();
-                    valores.add(new SimpleStringProperty(data.format(form)));
-                    valores.add(new SimpleStringProperty(String.valueOf(qntAlmoco)));
-                    valores.add(new SimpleStringProperty(String.valueOf(qntJanta)));
-                    linha.add(valores);
-                    vendas.add(linha);
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() == 200) {
+                JSONObject jsonResponse = new JSONObject(response.body());
+                JSONArray data = jsonResponse.getJSONArray("data");
+                ObservableList<List<List<String>>> vendas = tbVendas.getItems();
+                vendas.clear();
+
+                for (int i = 0; i < data.length(); i++) {
+                    JSONObject item = data.getJSONObject(i);
+                    String dataVenda = item.getString("data");
+                    int almoco = item.getInt("almoco");
+                    int jantar = item.getInt("jantar");
+                    vendas.add(new ArrayList<>(Arrays.asList(Arrays.asList(dataVenda, String.valueOf(almoco), String.valueOf(jantar)))));
                 }
-                data=data.plusDays(1);
+                tbVendas.setItems(vendas);
+                clnDataV.setCellValueFactory(cellData -> cellData.getValue().get(0).get(0));
+                clnAlmocoV.setCellValueFactory(cellData -> cellData.getValue().get(0).get(1));
+                clnJantarV.setCellValueFactory(cellData -> cellData.getValue().get(0).get(2));
+            } else {
+                // Tratar erro
+                // Exibir mensagem de erro
             }
-            tbVendas.setItems(vendas);
-            clnDataV.setCellValueFactory(cellData ->cellData.getValue().get(0).get(0));
-            clnAlmocoV.setCellValueFactory(cellData ->cellData.getValue().get(0).get(1));
-            clnJantarV.setCellValueFactory(cellData ->cellData.getValue().get(0).get(2));
-        }
-        catch(DataInvalidaException dti){
-            Alert info = new Alert(Alert.AlertType.WARNING);
-            info.setTitle("Data Inválida!");
-            info.setContentText(dti.getMessage());
-            info.show();
-        }
-        catch(PeriodoInvalidoException pdi){
-            Alert info = new Alert(Alert.AlertType.WARNING);
-            info.setTitle("Período Inválido!");
-            info.setContentText(pdi.getMessage());
-            info.show();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     @FXML
-    protected void btnRelatorioC(){
-        LocalDate inicio=dtInicioC.getValue();
-        LocalDate fim=dtFimC.getValue();
-        DateTimeFormatter form= DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    protected void btnRelatorioC() {
+        LocalDate inicio = dtInicioC.getValue();
+        LocalDate fim = dtFimC.getValue();
+        DateTimeFormatter form = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-        try{
-            LocalDate data=inicio;
-            Map<LocalDate,Integer> mapaAlmoco=Controlador.getInstance().relatorioConsumoAlmoco(inicio,fim);
-            Map<LocalDate,Integer> mapaJantar=Controlador.getInstance().relatorioConsumoJantar(inicio,fim);
-            ObservableList<List<List<SimpleStringProperty>>> vendas = FXCollections.observableArrayList();
+        try {
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create("http://localhost:3330/relatorio/consumo"))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString("{\"inicio\": \"" + inicio + "\", \"fim\": \"" + fim + "\"}"))
+                    .build();
 
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            while(!data.isAfter(fim)) {
-                int qntAlmoco=mapaAlmoco.getOrDefault(data,0);
-                int qntJanta=mapaJantar.getOrDefault(data,0);
-                if(qntAlmoco!=0 || qntJanta!=0) {
-                    List<List<SimpleStringProperty>>linha=new ArrayList<>();
-                    List<SimpleStringProperty> valores=new ArrayList<>();
-                    valores.add(new SimpleStringProperty(data.format(form)));
-                    valores.add(new SimpleStringProperty(String.valueOf(qntAlmoco)));
-                    valores.add(new SimpleStringProperty(String.valueOf(qntJanta)));
-                    linha.add(valores);
-                    vendas.add(linha);
+            if (response.statusCode() == 200) {
+                JSONObject jsonResponse = new JSONObject(response.body());
+                JSONArray data = jsonResponse.getJSONArray("data");
+                ObservableList<List<List<String>>> consumos = tbConsumo.getItems();
+                consumos.clear();
+
+                for (int i = 0; i < data.length(); i++) {
+                    JSONObject item = data.getJSONObject(i);
+                    String dataConsumo = item.getString("data");
+                    int almoco = item.getInt("almoco");
+                    int jantar = item.getInt("jantar");
+                    consumos.add(new ArrayList<>(Arrays.asList(Arrays.asList(dataConsumo, String.valueOf(almoco), String.valueOf(jantar)))));
                 }
-                data=data.plusDays(1);
+                tbConsumo.setItems(consumos);
+                clnDataC.setCellValueFactory(cellData -> cellData.getValue().get(0).get(0));
+                clnAlmocoC.setCellValueFactory(cellData -> cellData.getValue().get(0).get(1));
+                clnJantarC.setCellValueFactory(cellData -> cellData.getValue().get(0).get(2));
+            } else {
+                // Tratar erro
+                // Exibir mensagem de erro
             }
-            tbConsumo.setItems(vendas);
-            clnDataC.setCellValueFactory(cellData ->cellData.getValue().get(0).get(0));
-            clnAlmocoC.setCellValueFactory(cellData ->cellData.getValue().get(0).get(1));
-            clnJantarC.setCellValueFactory(cellData ->cellData.getValue().get(0).get(2));
-            //tbRelatorio.refresh();
-        }
-        catch(DataInvalidaException dti){
-            Alert info = new Alert(Alert.AlertType.ERROR);
-            info.setTitle("Data Inválida!");
-            info.setContentText(dti.getMessage());
-            info.show();
-        }
-        catch(PeriodoInvalidoException pdi){
-            Alert info = new Alert(Alert.AlertType.ERROR);
-            info.setTitle("Período Inválido!");
-            info.setContentText(pdi.getMessage());
-            info.show();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     @FXML
     protected void btVoltar(ActionEvent event) throws IOException {
         root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("TelaFuncionario.fxml")));
-        stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
         stage.show();

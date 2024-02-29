@@ -1,53 +1,104 @@
 const cardapioModel = require('../models/cardapioModel');
 const moment = require('moment');
+const axios = require('axios');
 
+const cadastrar_cardapio = async (req, res) => {
+    const { data_inicio, tipo, opcao_segunda, opcao_terca, opcao_quarta, opcao_quinta, opcao_sexta } = req.body;
 
-
-const cadastrar_opcao = async (req, res) =>{
-    const {opcao1, opcao2, vegana, fast_grill, suco, sobremesa} = req.body;
+    // Verificar se as opções fornecidas existem antes de cadastrar o cardápio
+    try {
+        const opcoesExistentes = await Promise.all([
+            buscar_opcao(opcao_segunda),
+            buscar_opcao(opcao_terca),
+            buscar_opcao(opcao_quarta),
+            buscar_opcao(opcao_quinta),
+            buscar_opcao(opcao_sexta)
+        ]);
     
-    const codigo_opcao = await  cardapioModel.cadastrar_opcao(opcao1, opcao2, vegana, fast_grill, suco, sobremesa);
-    return res.status(200).json(codigo_opcao);
+        // Verifica se alguma opção retornou um erro
+        const opcoesInvalidas = opcoesExistentes.filter(opcao => opcao && opcao.erro);
+        if (opcoesInvalidas.length > 0) {
+            const mensagensErro = opcoesInvalidas.map(opcao => opcao.erro);
+            return res.status(200).json( mensagensErro );
+        }
+
+        // Todas as opções existem, então podemos prosseguir com o cadastro
+        const result = await cardapioModel.cadastrar_cardapio(data_inicio, tipo, opcao_segunda, opcao_terca, opcao_quarta, opcao_quinta, opcao_sexta);
+        return res.status(200).json(result);
+    } catch (error) {
+        console.error("Erro ao cadastrar cardápio:", error);
+        return res.status(500).json({ mensagem: "Erro interno do servidor" });
+    }
 };
 
-const buscar_opcao = async (req, res) =>{
-    const {codigoOpcao} = req.body;
-    
-    const opcao_refeicao = await  cardapioModel.buscar_opcao(codigoOpcao);
-    return res.status(200).json(opcao_refeicao);
+const buscar_cardapio = async (req, res) => {
+    const { data_inicio, tipo } = req.body;
+    try {
+        const cardapio = await cardapioModel.buscar_cardapio(data_inicio, tipo);
+        console.log(cardapio);
+        //verifica se deu erro
+        if('erro' in cardapio){
+            console.log("entro");
+            return res.status(200).json(cardapio);
+        }
+
+        // Fazer requisição para obter as opções detalhadas
+        const opcoes = {
+            segunda: await buscar_opcao(cardapio.opcoes.segunda),
+            terca: await buscar_opcao(cardapio.opcoes.terca),
+            quarta: await buscar_opcao(cardapio.opcoes.quarta),
+            quinta: await buscar_opcao(cardapio.opcoes.quinta),
+            sexta: await buscar_opcao(cardapio.opcoes.sexta)
+        };
+
+        cardapio.opcoes = opcoes;
+        return res.status(200).json(cardapio);
+    } catch (error) {
+        console.error("Erro ao buscar cardápio:", error);
+        return res.status(500).json({ mensagem: "Erro interno do servidor" });
+    }
 };
 
-const editar_opcao = async (req, res) =>{
-    const {codigo, opcao1, opcao2, vegana, fast_grill, suco, sobremesa} = req.body;
-    
-    const result = await  cardapioModel.editar_opcao(codigo, opcao1, opcao2, vegana, fast_grill, suco, sobremesa);
-    return res.status(200).json(result);
-};
-
-
-const cadastrar_cardapio = async (req, res) =>{
+const editar_cardapio =async (req,res) =>{
     const {data_inicio, tipo, opcao_segunda, opcao_terca, opcao_quarta, opcao_quinta, opcao_sexta} = req.body;
-    //dataInicio = moment(dataInicio, 'DD/MM/YYYY').format('YYYY-MM-DD');
-    const result = await  cardapioModel.cadastrar_cardapio(data_inicio, tipo, opcao_segunda, opcao_terca, opcao_quarta, opcao_quinta, opcao_sexta);
-    return res.status(200).json(result);
+
+    // Verificar se as opções fornecidas existem antes de cadastrar o cardápio
+    try {
+        const opcoesExistentes = await Promise.all([
+            buscar_opcao(opcao_segunda),
+            buscar_opcao(opcao_terca),
+            buscar_opcao(opcao_quarta),
+            buscar_opcao(opcao_quinta),
+            buscar_opcao(opcao_sexta)
+        ]);
+    
+        // Verifica se alguma opção retornou um erro
+        const opcoesInvalidas = opcoesExistentes.filter(opcao => opcao && opcao.erro);
+        if (opcoesInvalidas.length > 0) {
+            const mensagensErro = opcoesInvalidas.map(opcao => opcao.erro);
+            return res.status(200).json( mensagensErro );
+        }
+        const result = await cardapioModel.editar_cardapio(data_inicio,tipo,opcao_segunda,opcao_terca,opcao_quarta,opcao_quinta,opcao_sexta);
+        return res.status(200).json(result);
+    }catch (error) {
+        console.error("Erro ao cadastrar cardápio:", error);
+        return res.status(500).json({ mensagem: "Erro interno do servidor" });
+    }
 };
 
-
-const buscar_cardapio = async (req, res) =>{
-    const {data_inicio, tipo} = req.body;
-   // dataInicio = moment(dataInicio, 'DD/MM/YYYY').format('YYYY-MM-DD');
-    const cardapio= await  cardapioModel.buscar_cardapio(data_inicio, tipo);
-    return res.status(200).json(cardapio);
+// Função para buscar opção através da rota http://localhost:3337/opcao/buscar
+const buscar_opcao = async (opcaoId) => {
+    try {
+        const response = await axios.post('http://localhost:3337/opcao/buscar', { codigo: opcaoId });
+        return response.data;
+    } catch (error) {
+        console.error("Erro ao buscar opção:", error);
+        throw error;
+    }
 };
-
-
-
-
 
 module.exports = {
-    cadastrar_opcao,
-    buscar_opcao,
-    editar_opcao,
     cadastrar_cardapio,
-    buscar_cardapio
+    buscar_cardapio,
+    editar_cardapio
 };
