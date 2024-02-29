@@ -33,6 +33,7 @@ usuarioRouter.post('/excluir',usuarioController.excluirUsuario);
 ticketRounter.post('/comprar',ticketController.comprar);
 ticketRounter.post('/consumir',ticketController.consumir);
 ticketRounter.get('/listar',ticketController.listar);
+ticketRounter.post('/noaConsumidos',ticketController.listar_ticketConsumidos);
 
 
 //relatorio

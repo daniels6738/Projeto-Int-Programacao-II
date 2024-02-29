@@ -54,8 +54,6 @@ public class TelaLoginController {
 
         // Cria um cliente HTTP
         HttpClient client = HttpClient.newHttpClient();
-        
-
         // Cria a requisição HTTP para a rota de login da API
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("http://localhost:3330/usuario/login"))
@@ -63,58 +61,37 @@ public class TelaLoginController {
                 .POST(HttpRequest.BodyPublishers.ofString("{\"cpf\": \"" + cpf + "\", \"senha\": \"" + senha + "\"}"))
                 .build();
                 
-
         try {
             // Envia a requisição para a API e obtém a resposta
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            
-
-          
-      
-
-
             // Verifica se a resposta da API indica um login válido
             if (response.statusCode() == 200) {
-                // Expressão regular para encontrar o valor do campo "nome"
-                
-               // System.out.println("entoru aqui 5");
-                System.out.println(response.body());
-                UserAtual.getInstance().setCpf(cpf);
 
-               
+                //System.out.println(response.body());
+                UserAtual.getInstance().setCpf(cpf);
+                // Converta a string do corpo da requisição em um objeto JSONObject
+                JSONObject jsonObject = new JSONObject(response.body());
+
+                //verifica se no corpa de requisição tem o campo usuario
+                if(jsonObject.has("usuario")){
+                    JSONObject usuario = jsonObject.getJSONObject("usuario");
+                //verifica se no corpo de usuario tem o nome
+                    if(usuario.has("nome")){
+                        //pega o nome
+                        String nome = usuario.getString("nome");
+                        UserAtual.getInstance().setNome(nome);
+                    }
+                }
+
                 
                 // Se o login for válido, carrega a interface correspondente
                 if (response.body().contains("estudante")) {
-                    
-                   
+                    UserAtual.getInstance().settipoUser(1);
                     root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("TelaAluno.fxml")));
-                    
                 } else {
-                    //chamada da tela funcionario (assim funciona porem não chama a tela)
-                  
-                    root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("TelaFuncionario.fxml")));
-                   
-                 //desse modo é para passar o parametro para saber o usuario
-                   /*  
-                   FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource("TelaFuncionario.fxml")));
-                    Parent root = loader.load();
-                    TelaFuncionarioController controller = loader.getController();
-                    controller.setBody(response.body());
-                    */
-                    
-                    
-                    
-                    
-                  
+                    UserAtual.getInstance().settipoUser(2);
+                    root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("TelaFuncionario.fxml")));          
                 }
-
-
-
-
-
-
-
-
                 // Configura a cena e exibe a tela inicial
                 stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 scene = new Scene(root);

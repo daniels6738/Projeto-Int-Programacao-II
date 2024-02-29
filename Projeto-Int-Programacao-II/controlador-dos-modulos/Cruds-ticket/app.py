@@ -63,14 +63,27 @@ def listar_ticket():
 
     return jsonify(lista), 200
 
+# Rota para listar tickets
+@app.route('/ticket/noaConsumidos', methods=['POST'])
 
+def listar_ticketConsumidos():
 
+    req_data = request.get_json()
+    usuario = req_data['usuario']
+    tipo = req_data['tipo']
 
+    # Conectar ao banco de dado
+    conn = conectar_bd()
+    cursor = conn.cursor()
 
+    # Verificar se o usuário possui um ticket a ser consumido
+    query = "SELECT * FROM ticket_refeicao WHERE usuario = %s AND tipo = %s AND data_consumo IS NULL"
+    cursor.execute(query, (usuario, tipo))
+    result = cursor.fetchall()
+    total = len(result)
+    conn.close()
 
-
-
-
+    return jsonify({"total":total,}), 200
 
 
 
@@ -99,7 +112,7 @@ def consumir():
         return jsonify({"mensagem": "Ticket consumido com sucesso"}), 200
     else:
         conn.close()
-        return jsonify({"mensagem": "Nenhum ticket disponível para consumo"}), 201
+        return jsonify({"erro": "Nenhum ticket disponível para consumo"}), 201
 
 if __name__ == '__main__':
     app.run(debug=True, port=3333)

@@ -19,9 +19,14 @@ const listar = async (req,res) => {
     return res.status(response.status).json(response.data);
 
 };
+const listar_ticketConsumidos = async (req,res) => {
+    const response = await axios.post('http://localhost:3333/ticket/noaConsumidos',req.body);
+    return res.status(response.status).json(response.data);
+}
 
 module.exports = {
     comprar,
     consumir,
-    listar
+    listar,
+    listar_ticketConsumidos
 };

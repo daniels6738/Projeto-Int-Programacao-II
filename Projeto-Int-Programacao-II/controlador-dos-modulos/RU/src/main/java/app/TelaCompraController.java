@@ -15,10 +15,17 @@ import models.Estudante;
 import models.Funcionario;
 import models.TipoRefeicao;
 import negocio.Controlador;
+import negocio.UserAtual;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.Objects;
 import java.util.Random;
+
+import org.json.JSONObject;
 
 public class TelaCompraController {
 
@@ -37,40 +44,139 @@ public class TelaCompraController {
 
     @FXML
     protected void initialize(){
-        labelQtdAlmoco.setText(String.valueOf(Controlador.getInstance().listarTicketAlmocoNaoConsumido(Controlador.getInstance().getUsuario()).size()));
-        labelQtdJanta.setText(String.valueOf(Controlador.getInstance().listarTicketJantarNaoConsumido(Controlador.getInstance().getUsuario()).size()));
+        //pegar quantidade almoço e janta do usuario
+        try { 
+  
+         String cpf = UserAtual.getInstance().getCpf();
+            String tipoAlmoco = "almoço";
+            String tipoJanta = "janta";
+    
+            // Cria um cliente HTTP
+            HttpClient client = HttpClient.newHttpClient();
+            
+            // Requisição para almoço não consumido
+            HttpRequest requestAlmoco = HttpRequest.newBuilder()
+                    .uri(URI.create("http://localhost:3330/ticket/listar/naoConsumidos"))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString("{\"usuario\": \"" + cpf + "\", \"tipo\": \"" + tipoAlmoco + "\"}"))
+                    .build();
+            
+            // Requisição para janta não consumida
+            HttpRequest requestJanta = HttpRequest.newBuilder()
+                    .uri(URI.create("http://localhost:3330/ticket/listar/naoConsumidos"))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString("{\"usuario\": \"" + cpf + "\", \"tipo\": \"" + tipoJanta + "\"}"))
+                    .build();
+    
+            // Envia a requisição para a API e obtém a resposta para o almoço
+            HttpResponse<String> responseAlmoco = client.send(requestAlmoco, HttpResponse.BodyHandlers.ofString());
+            // Verifica se a resposta da API indica um login válido para o almoço
+            if (responseAlmoco.statusCode() == 200) {
+                // Converta a string do corpo da requisição em um objeto JSONObject para o almoço
+                JSONObject jsonObjectAlmoco = new JSONObject(responseAlmoco.body());
+                String totalAlmoco = jsonObjectAlmoco.getString("total");
+    
+                
+                labelQtdAlmoco.setText(labelQtdAlmoco.getText() + totalAlmoco);
+            }
+    
+            // Envia a requisição para a API e obtém a resposta para a janta
+            HttpResponse<String> responseJanta = client.send(requestJanta, HttpResponse.BodyHandlers.ofString());
+            // Verifica se a resposta da API indica um login válido para a janta
+            if (responseJanta.statusCode() == 200) {
+                // Converta a string do corpo da requisição em um objeto JSONObject para a janta
+                JSONObject jsonObjectJanta = new JSONObject(responseJanta.body());
+                String totalJanta = jsonObjectJanta.getString("total");
+    
+                labelQtdJanta.setText(labelQtdJanta.getText() + totalJanta);
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
+
+  
     }
     @FXML
     protected void botaoComprarAlmoco() {
         try {
-            //Controlador.getInstance().getRepositorioTicketRefeicao().inserir(new TicketRefeicao(LocalDate.now(),String.valueOf(random.nextInt(100000)),3.5,Controlador.getInstance().getUsuario(), TipoRefeicao.ALMOCO));
-            Controlador.getInstance().comprarRefeicao(Controlador.getInstance().getUsuario(),TipoRefeicao.ALMOCO);
-            labelQtdAlmoco.setText(String.valueOf(Controlador.getInstance().listarTicketAlmocoNaoConsumido(Controlador.getInstance().getUsuario()).size()));
-        } catch (ElementoJaExisteException e) {
+            
+            String cpf = UserAtual.getInstance().getCpf();
+            String tipoAlmoco = "almoço";
+
+            HttpClient client = HttpClient.newHttpClient();
+            
+            // Requisição para almoço não consumido
+            HttpRequest requestAlmoco = HttpRequest.newBuilder()
+                    .uri(URI.create("http://localhost:3330/ticket/comprar"))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString("{\"usuario\": \"" + cpf + "\", \"tipo\": \"" + tipoAlmoco + "\"}"))
+                    .build();
+
+             // Envia a requisição para a API e obtém a resposta para o almoço
+             HttpResponse<String> responseAlmoco = client.send(requestAlmoco, HttpResponse.BodyHandlers.ofString());
+             // Verifica se a resposta da API indica um login válido para o almoço
+             if (responseAlmoco.statusCode() == 200) {
+               initialize();
+            }
+            
+
+        } catch (IOException | InterruptedException e) {
             Alert info = new Alert(Alert.AlertType.ERROR);
             info.setTitle("Erro");
             info.setContentText("Desculpe! Tente novamente!");
             info.show();
+            e.printStackTrace();
+        }
+        
+       
+    }
+    
+
+    @FXML
+    protected void botaoComprarJanta() throws ElementoJaExisteException {
+        try {
+            
+            String cpf = UserAtual.getInstance().getCpf();
+            String tipoAlmoco = "janta";
+
+            HttpClient client = HttpClient.newHttpClient();
+            
+            // Requisição para almoço não consumido
+            HttpRequest requestJanta = HttpRequest.newBuilder()
+                    .uri(URI.create("http://localhost:3330/ticket/comprar"))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString("{\"usuario\": \"" + cpf + "\", \"tipo\": \"" + tipoAlmoco + "\"}"))
+                    .build();
+
+             // Envia a requisição para a API e obtém a resposta para o almoço
+             HttpResponse<String> responseJanta = client.send(requestJanta, HttpResponse.BodyHandlers.ofString());
+             // Verifica se a resposta da API indica um login válido para o almoço
+             if (responseJanta.statusCode() == 200) {
+               initialize();
+            }
+            
+
+        } catch (IOException | InterruptedException e) {
+            Alert info = new Alert(Alert.AlertType.ERROR);
+            info.setTitle("Erro");
+            info.setContentText("Desculpe! Tente novamente!");
+            info.show();
+            e.printStackTrace();
         }
     }
 
     @FXML
-    protected void botaoComprarJanta() throws ElementoJaExisteException {
-        //Controlador.getInstance().getRepositorioTicketRefeicao().inserir(new TicketRefeicao(LocalDate.now(),String.valueOf(random.nextInt(100000)),3.0,Controlador.getInstance().getUsuario(), TipoRefeicao.JANTAR));
-        Controlador.getInstance().comprarRefeicao(Controlador.getInstance().getUsuario(),TipoRefeicao.JANTAR);
-        labelQtdJanta.setText(String.valueOf(Controlador.getInstance().listarTicketJantarNaoConsumido(Controlador.getInstance().getUsuario()).size()));
-    }
-
-    @FXML
     protected void botaoVoltar(ActionEvent event) throws IOException {
-        if (Controlador.getInstance().getUsuario() instanceof Estudante) {
+        if (UserAtual.getInstance().gettipoUser()==1) {
             root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("TelaAluno.fxml")));
             stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             scene = new Scene(root);
             stage.setScene(scene);
             stage.show();
             stage.setTitle("Tela Inicial");
-        } else if (Controlador.getInstance().getUsuario() instanceof Funcionario) {
+        } else if (UserAtual.getInstance().gettipoUser()==2) {
             root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("TelaFuncionario.fxml")));
             stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             scene = new Scene(root);
