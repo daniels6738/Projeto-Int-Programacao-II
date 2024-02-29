@@ -41,12 +41,13 @@ ticketRounter.post('/noaConsumidos',ticketController.listar_ticketConsumidos);
 
 //relatorio
 relatorioRouter.post('/vendidos', relatorioController.vendidos);
-relatorioRouter.post('/consumidos', relatorioController.consumidos );
+relatorioRouter.post('/consumidos', relatorioController.consumidos);
 
 
 //cardapio
 cardapioRouter.post('/cadastrar', cardapioController.cadastrar_cardapio);
 cardapioRouter.post('/buscar', cardapioController.buscar_cardapio);
+cardapioRouter.post('/editar',cardapioController.editar_cardapio);
 
 //opção
 opcaoRouter.post('/cadastrar', opcaoController.cadastrar_opcao);

@@ -4,8 +4,8 @@ require('dotenv').config();
 const axios = require('axios');
 
 const cadastrar_cardapio = async (dataInicio, tipo, opcaoSegunda, opcaoTerca, opcaoQuarta, opcaoQuinta, opcaoSexta) => {
-    const query = 'SELECT * FROM cardapio WHERE data_inicio =?';
-    const [result] = await connection.execute(query,[dataInicio]);
+    const query = 'SELECT * FROM cardapio WHERE data_inicio =? && tipo = ?';
+    const [result] = await connection.execute(query,[dataInicio,tipo]);
     if(result.length >0){
         return {erro: "essa semana ja tem cardapio cadastrado"};
     }
