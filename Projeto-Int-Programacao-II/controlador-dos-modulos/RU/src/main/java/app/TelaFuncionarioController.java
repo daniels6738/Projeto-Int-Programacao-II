@@ -11,6 +11,7 @@ import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.stage.Stage;
 import negocio.Controlador;
+import negocio.UserAtual;
 
 import java.io.IOException;
 import java.util.Objects;

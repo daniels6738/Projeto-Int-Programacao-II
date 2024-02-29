@@ -5,28 +5,28 @@ const getAll = async (req,res) => {
     const usuario = await usuarioModel.getAll();
 
     return res.status(200).json({
-        usuario,
-        mensagem: 'controller está tudo certo'
+        usuario
     });
 };
 
 const sigIn = async (req,res) => {
-
-    const usuario = await usuarioModel.sigIn(req.body,res);
     
-    if ('mensagem' in usuario){
-        return res.status(401).json({mensagem: usuario.mensagem});
-    } else 
-    return res.status(200).json(usuario);
-};
+        const usuario = await usuarioModel.sigIn(req.body, res);
+        
+        if ('mensagem' in usuario) {
+            return res.status(400).json({ mensagem: usuario.mensagem });
+        } else {
+            return res.status(200).json(usuario);
+        }
+    };
 
 
 const sigUp = async (req,res) => {
 
     const usuario = await usuarioModel.sigUp(req.body,res);
     
-    if('mensagem' in usuario)
-        return res.status(401).json({mensagem: usuario.mensagem});
+    if('erro' in usuario)
+        return res.status(401).json({mensagem: usuario.erro});
     else
         return res.status(200).json(usuario)
 };
@@ -50,7 +50,7 @@ const deleteUser = async (req,res) => {
 };
 
 const ediUser = async (req,res) => {
-    const usuario = await usuarioModel.ediUser(req.body.cpf , req.body);
+    const usuario = await usuarioModel.ediUser(req.body);
     if('erro' in usuario){
         return res.status(401).json({mensagem: usuario.erro});
     } else {

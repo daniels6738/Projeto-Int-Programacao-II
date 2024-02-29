@@ -15,12 +15,16 @@ import models.Estudante;
 import negocio.Controlador;
 import negocio.UserAtual;
 
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Objects;
+
+//import org.json.JSONObject;
+
 
 public class TelaLoginController {
 
@@ -44,13 +48,13 @@ public class TelaLoginController {
 
     @FXML
     protected void botaoLoginApertar(ActionEvent event) throws IOException {
-        System.out.println("entoru aqui 1");
+        
         String cpf = CPFTextField.getText();
         String senha = senhaPasswordField.getText();
 
         // Cria um cliente HTTP
         HttpClient client = HttpClient.newHttpClient();
-        System.out.println("entoru aqui 2");
+        
 
         // Cria a requisição HTTP para a rota de login da API
         HttpRequest request = HttpRequest.newBuilder()
@@ -58,12 +62,12 @@ public class TelaLoginController {
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString("{\"cpf\": \"" + cpf + "\", \"senha\": \"" + senha + "\"}"))
                 .build();
-                System.out.println("entoru aqui 3");
+                
 
         try {
             // Envia a requisição para a API e obtém a resposta
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            System.out.println("entoru aqui 4");
+            
 
           
       
@@ -71,17 +75,25 @@ public class TelaLoginController {
 
             // Verifica se a resposta da API indica um login válido
             if (response.statusCode() == 200) {
+                // Expressão regular para encontrar o valor do campo "nome"
+                
                // System.out.println("entoru aqui 5");
                 System.out.println(response.body());
+                UserAtual.getInstance().setCpf(cpf);
+
+               
+                
                 // Se o login for válido, carrega a interface correspondente
                 if (response.body().contains("estudante")) {
                     
+                   
                     root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("TelaAluno.fxml")));
-                    UserAtual.getInstance().setCpf(cpf);
+                    
                 } else {
                     //chamada da tela funcionario (assim funciona porem não chama a tela)
+                  
                     root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("TelaFuncionario.fxml")));
-                    UserAtual.getInstance().setCpf(cpf);
+                   
                  //desse modo é para passar o parametro para saber o usuario
                    /*  
                    FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource("TelaFuncionario.fxml")));
@@ -113,7 +125,7 @@ public class TelaLoginController {
                 // Se a resposta da API indicar um login inválido, exibe um alerta
                 Alert alerta = new Alert(Alert.AlertType.ERROR);
                 alerta.setTitle("Login inválido!");
-                alerta.setContentText("CPF ou senha incorretos.");
+                alerta.setContentText(response.body());
                 alerta.show();
             }
         } catch (InterruptedException e) {

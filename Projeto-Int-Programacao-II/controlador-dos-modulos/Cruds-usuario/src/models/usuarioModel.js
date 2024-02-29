@@ -37,44 +37,31 @@ const buscarUsuario = async (cpf) =>{
       } else {
         return null;
       }
-}
+};
 
 
 
-const sigIn = async (usuario,res) => {
-    const {cpf, senha} = usuario;
+const sigIn = async (usuario, res) => {
+    const { cpf, senha } = usuario;
 
-    const [usuarioExiste] = await connection.execute('SELECT * FROM usuario WHERE cpf = ?',[cpf]);
+    const [usuarioExiste] = await connection.execute('SELECT * FROM usuario WHERE cpf = ?', [cpf]);
 
-    if(usuarioExiste.length === 0){
-        return {mensagem: "Usuário e/ou senha inválidos"};
+    if (usuarioExiste.length === 0) {
+        return { mensagem: 'Usuário e/ou senha inválidos' };
     }
 
-
-    //const senhaCorreta = await bcrypt.compare(senha, usuarioExiste[0].senha);
     if (usuarioExiste[0].senha != senha) {
-        return res.status(401).json({ mensagem: 'Usuário e/ou senha inválidos' });
-      }
-
-   // var query = 'SELECT id, data_criacao, data_atualizacao, ultimo_login, token FROM usuario WHERE email = ?';
-
-    //const [outputUsuario] = await connection.execute(query, [email]);
-
-    //connection.execute('UPDATE usuario SET ultimo_login = NOW() WHERE id = ?',[outputUsuario[0].id]);
+        return { mensagem: 'Usuário e/ou senha inválidos' };
+    }
 
     var usuario = { ...usuarioExiste[0] };
-    //var token = auth.gerarToken({  id:outputUsuario[0].id, email });
-    //usuario.token = token;
-    
-    var query = 'SELECT * FROM estudantes WHERE cpf = ?';
-    const [estudante] = await connection.execute(query,[cpf]);
-    if(estudante.length > 0){
-        return {usuario, tipo:"estudante"};
-    }
-    return {usuario, tipo:"funcionario"};
-   
 
-    
+    var query = 'SELECT * FROM estudante WHERE cpf = ?';
+    const [estudante] = await connection.execute(query, [cpf]);
+    if (estudante.length > 0) {
+        return { usuario, tipo: "estudante" };
+    }
+    return { usuario, tipo: "funcionario" };
 };
 
 
@@ -86,7 +73,7 @@ const sigUp = async (usuario) => {
     const [usuarioExiste] = await connection.execute('SELECT * FROM usuario WHERE cpf = ?',[cpf]);
 
     if(usuarioExiste.length > 0){
-        return {mensagem: "cpf já existe"};
+        return {erro: "cpf já existe"};
     }
 
    
@@ -101,13 +88,13 @@ const sigUp = async (usuario) => {
         var query = 'INSERT INTO estudante (cpf, matricula) VALUES (?, ?)';
         const [userAluno] = await connection.execute(query,[cpf,matricula]);
         var aluno = {...userAluno[0]};
-        return aluno;
+        return {mensagem:"aluno cadastrado com sucesso"};
         
     } else{
         var query = 'INSERT INTO funcionario (cpf, salario, data_admin) VALUES (?, ?, ?)'
         const [userfuncionario] = await connection.execute(query,[cpf, salario, data_admin]);
-        var funcionario = {...userfuncionario[0]};
-        return funcionario;
+       // var funcionario = {...userfuncionario[0]};
+        return {mensagem: "funcionario cadastrado com sucesso"};
     }        
     
 };
@@ -125,26 +112,26 @@ const deleteUser = async (cpf) => {
 
 };
 
-const ediUser = async (cpf,usuario) => {
-    const {nome,novocpf,data_nascimento, email, senha, matricula, salario, data_admin} = usuario;
-    const user = buscarUsuario(cpf);
+const ediUser = async (usuario) => {
+    const { nome, cpf, data_nascimento, email, senha, matricula, salario, data_admin } = usuario;
+    const user = await buscarUsuario(cpf); // Adicionando await aqui
 
-    if(user == null){
-        return {erro:'usuario não existe'};
+    if (!user) {
+        return { erro: 'usuario não existe' };
     } else {
-        var query = 'UPDATE usuario SET nome = ?, cpf = ?, data_nascimento = ?, email = ?, senha = ? WHERE cpf = ?'
-         await connection.execute(query,[nome,novocpf,data_nascimento,email,senha, cpf]);
+        if (user.tipo == 'estudante') {
+            var query = 'UPDATE estudante SET matricula = ? WHERE cpf = ?';
+            await connection.execute(query, [ matricula, cpf]);
+            //return {mensagem:'sucesso'};
+        } else {
+            var query = 'UPDATE funcionario SET salario = ?, data_admin = ? WHERE cpf = ?'; // Corrigindo salaraio para salario
+            await connection.execute(query, [salario, data_admin, cpf]); // Adicionando await aqui
+            //return {mensagem:'sucesso'};
+        }
 
-         if(user.tipo == 'estudante'){
-            var query = 'UPDATE estudante SET cpf = ?,matricula = ? WHERE cpf = ?';
-            await connection.execute(query,[novocpf,matricula]);
-            return {mensagem:'sucesso'};
-
-         } else {
-            var query = 'UPDATE funcionario SET cpf = ?, salaraio = ?, data_admin = ? WHERE cpf = ?'
-            await connection.execute(query[novocpf,salario,data_admin]);
-            return {mensagem:'sucesso'};
-         }
+        var query = 'UPDATE usuario SET nome = ?, data_nascimento = ?, email = ?, senha = ? WHERE cpf = ?';
+        await connection.execute(query, [nome, data_nascimento, email, senha, cpf]); // Adicionando await aqui
+        return { mensagem: "usuario atualizado" };
     }
 };
 
