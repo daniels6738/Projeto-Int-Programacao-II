@@ -36,8 +36,12 @@ const buscar_opcao = async (codigoOpcao) => {
 
 const editar_opcao = async (codigo, opcao1, opcao2, vegana, fast_grill, suco, sobremesa) => {
     try {
+        const result = await buscar_opcao(codigo);
+        if ('erro' in result) {
+            return { erro: result.erro };
+        }
         // Consulta SQL para editar a opção de refeição
-        const query = 'UPDATE opcao_refeicao SET opcao1 = ?, opcao2 = ?, vegana = ?, fast_grill = ?, suco = ?, sobremesa = ? WHERE codigo_opcao = ?';
+        var query = 'UPDATE opcao_refeicao SET opcao1 = ?, opcao2 = ?, vegana = ?, fast_grill = ?, suco = ?, sobremesa = ? WHERE codigo_opcao = ?';
         
         // Executar a consulta
         await connection.execute(query, [opcao1, opcao2, vegana, fast_grill, suco, sobremesa, codigo]);

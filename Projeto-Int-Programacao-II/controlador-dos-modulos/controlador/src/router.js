@@ -4,6 +4,7 @@ const usuarioMiddleware = require('./middleweres/usuarioMiddleware');
 const ticketController = require('./controllers/ticketController');
 const relatorioController = require('./controllers/relatorioController');
 const cardapioController = require('./controllers/cardapioController');
+const opcaoController = require("./controllers/opcaoController");
 
 //const lojaController = require('./controllers/lojaController');
 
@@ -48,8 +49,8 @@ cardapioRouter.post('/cadastrar', cardapioController.cadastrar_cardapio);
 cardapioRouter.post('/buscar', cardapioController.buscar_cardapio);
 
 //opção
-opcaoRouter.post('/cadastrarOpcao', opcaoController.cadastrar_opcao);
-opcaoRouter.post('/buscarOpcao', opcaoController.buscar_opcao);
-opcaoRouter.post('/editarOpcao', opcaoController.editar_opcao);
+opcaoRouter.post('/cadastrar', opcaoController.cadastrar_opcao);
+opcaoRouter.post('/buscar', opcaoController.buscar_opcao);
+opcaoRouter.post('/editar', opcaoController.editar_opcao);
 
 module.exports = router;
