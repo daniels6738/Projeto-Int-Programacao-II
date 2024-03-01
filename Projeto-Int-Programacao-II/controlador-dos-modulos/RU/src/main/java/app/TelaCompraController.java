@@ -48,7 +48,7 @@ public class TelaCompraController {
     
             // Requisição para obter a quantidade de almoços não consumidos
             HttpRequest requestAlmoco = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:3333/ticket/naoConsumidos"))
+                    .uri(URI.create("http://localhost:3330/ticket/naoConsumidos"))
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString("{\"usuario\": \"" + cpf + "\", \"tipo\": \"almoço\"}"))
                     .build();
@@ -67,7 +67,7 @@ public class TelaCompraController {
     
             // Requisição para obter a quantidade de jantas não consumidas
             HttpRequest requestJanta = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:3333/ticket/naoConsumidos"))
+                    .uri(URI.create("http://localhost:3330/ticket/naoConsumidos"))
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString("{\"usuario\": \"" + cpf + "\", \"tipo\": \"janta\"}"))
                     .build();
@@ -103,7 +103,7 @@ public class TelaCompraController {
             
             // Requisição para almoço não consumido
             HttpRequest requestAlmoco = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:3333/ticket/comprar"))
+                    .uri(URI.create("http://localhost:3330/ticket/comprar"))
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString("{\"usuario\": \"" + cpf + "\", \"tipo\": \"" + tipoAlmoco + "\"}"))
                     .build();
