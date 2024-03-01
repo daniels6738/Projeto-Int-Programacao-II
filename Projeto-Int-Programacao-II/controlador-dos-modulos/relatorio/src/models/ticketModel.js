@@ -15,11 +15,11 @@ const consumidos = async (dataInicio, dataFim) => {
         const [resultJanta] = await connection.execute(queryJanta, [dataInicio, dataFim]);
 
         // Extrair os resultados das consultas
-        const almocosConsumidos = resultAlmoco[0].almocos_consumidos;
-        const jantasConsumidas = resultJanta[0].jantas_consumidas;
+        const almocos = resultAlmoco[0].almocos_consumidos;
+        const jantas = resultJanta[0].jantas_consumidas;
 
         // Retornar o resultado
-        return { almocosConsumidos, jantasConsumidas };
+        return { almocos, jantas };
     } catch (error) {
         // Lidar com erros
         console.error("Erro ao obter a quantidade de tickets consumidos:", error);
