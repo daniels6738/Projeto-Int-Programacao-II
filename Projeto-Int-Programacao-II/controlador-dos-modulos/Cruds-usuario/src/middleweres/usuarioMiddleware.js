@@ -3,22 +3,22 @@ require('dotenv').config();
 
 const verifyJTW = (req,res,next) => {
     const token = req.headers['authorization'];
-    console.log('entrou');
+    console.log("entrou");
     jwt.verify(token,process.env.JTW_KEY,(err, decoded)=>{
-        console.log('dentro do verify');
+        console.log("dentro do verify");
         console.log(decoded);
         if(err) {
-            console.log('if de não outorizado');
-            return res.json({mensagem: 'Não autorizado'});
+            console.log("if de não outorizado");
+            return res.json({mensagem: "Não autorizado"})
         }
-        console.log('passou do nao autorizado');
+        console.log("passou do nao autorizado");
         if (decoded.exp && decoded.exp * 1000 < Date.now()) {
-            console.log('entoru em sesao invalida');
-            return res.json({ mensagem: 'Sessão inválida' });
-        }
-        console.log('deu tudo certo ');
-        req.decodedToken = decoded;
-        next();
+            console.log("entoru em sesao invalida");
+            return res.json({ mensagem: "Sessão inválida" });
+          }
+          console.log("deu tudo certo ");
+          req.decodedToken = decoded;
+          next();
     });
 };
 

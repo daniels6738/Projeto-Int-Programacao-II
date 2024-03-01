@@ -149,12 +149,14 @@ public class TelaCardapioController {
         try {
             
             LocalDate dataAtual = LocalDate.now();
-            
-           
-            
 
             HttpClient client = HttpClient.newHttpClient();
             
+                    // Obtém o tempo de início da requisição
+        long startTime = System.currentTimeMillis();
+            
+           // HttpRequest requestCardapio;
+          
             // Requisição para almoço não consumido
             HttpRequest requestCardapio = HttpRequest.newBuilder()
                     .uri(URI.create("http://localhost:3330/cardapio/buscar"))
@@ -164,10 +166,18 @@ public class TelaCardapioController {
 
              // Envia a requisição para a API e obtém a resposta para o almoço
              HttpResponse<String> responseCardapio = client.send(requestCardapio, HttpResponse.BodyHandlers.ofString());
+
+              // Obtém o tempo de fim da requisição
+        long endTime = System.currentTimeMillis();
+        
+        // Calcula o tempo de resposta
+        long responseTime = endTime - startTime;
+        
+        // Imprime o tempo de resposta no console
+        System.out.println("Tempo de resposta da solicitação: " + responseTime + " milissegundos");
              // Verifica se a resposta da API indica um login válido para o almoço
-             System.out.println("entrou primeiro");
              if (responseCardapio.statusCode() == 200) {
-                principal1SegundaLabel.setText("");
+                
            JSONObject jsonObject = new JSONObject(responseCardapio.body());
 
             // Verifica se no corpo de resposta tem o campo "opcoes"
@@ -178,25 +188,64 @@ public class TelaCardapioController {
                 if(opcoes.has("segunda")){
                     // Obtém o array de opções para segunda-feira
                     JSONArray segundaArray = opcoes.getJSONArray("segunda");
+                    JSONArray tercaArray = opcoes.getJSONArray("terca");
+                    JSONArray quartaArray = opcoes.getJSONArray("quarta");
+                    JSONArray quintaArray = opcoes.getJSONArray("quinta");
+                    JSONArray sextaArray = opcoes.getJSONArray("sexta");
                     
                     // Verifica se o array possui elementos
                     if(segundaArray.length() > 0){
                         // Obtém o primeiro elemento do array
                         JSONObject segundaObjeto = segundaArray.getJSONObject(0);
-                        
-                        // Verifica se o objeto possui o campo "opcao1"
-                        if(segundaObjeto.has("opcao1")){
-                            // Obtém o valor do campo "opcao1"
-                            String opcao1Segunda = segundaObjeto.getString("opcao1");
-                            
-                            // Imprime o valor de "opcao1" no console
-                            System.out.println(opcao1Segunda);
-                            principal1SegundaLabel.setText(opcao1Segunda);
-                            
-                            // Assuma que principal1SegundaLabel é um componente de interface gráfica onde você deseja exibir o valor
-                            // principal1SegundaLabel.setText(opcao1Segunda);
-                        }
+                            principal1SegundaLabel.setText(segundaObjeto.getString("opcao1"));
+                            principal2SegundaLabel.setText(segundaObjeto.getString("opcao2"));
+                            vegetarianoSegundaLabel.setText(segundaObjeto.getString("vegana"));
+                            fastSegundaLabel.setText(segundaObjeto.getString("fast_grill"));
+                            sucoSegundaLabel.setText(segundaObjeto.getString("suco"));
+                            sobremesaSegundaLabel.setText(segundaObjeto.getString("sobremesa"));
                     }
+                    if(tercaArray.length() > 0){
+                        // Obtém o primeiro elemento do array
+                        JSONObject tercaObjeto = tercaArray.getJSONObject(0);
+                            principal1TercaLabel.setText(tercaObjeto.getString("opcao1"));
+                            principal2TercaLabel.setText(tercaObjeto.getString("opcao2"));
+                            vegetarianoTercaLabel.setText(tercaObjeto.getString("vegana"));
+                            fastTercaLabel.setText(tercaObjeto.getString("fast_grill"));
+                            sucoTercaLabel.setText(tercaObjeto.getString("suco"));
+                            sobremesaTercaLabel.setText(tercaObjeto.getString("sobremesa"));
+                    }
+                    if(quartaArray.length() > 0){
+                        // Obtém o primeiro elemento do array
+                        JSONObject quartaObjeto = quartaArray.getJSONObject(0);
+                            principal1QuartaLabel.setText(quartaObjeto.getString("opcao1"));
+                            principal2QuartaLabel.setText(quartaObjeto.getString("opcao2"));
+                            vegetarianoQuartaLabel.setText(quartaObjeto.getString("vegana"));
+                            fastQuartaLabel.setText(quartaObjeto.getString("fast_grill"));
+                            sucoQuartaLabel.setText(quartaObjeto.getString("suco"));
+                            sobremesaQuartaLabel.setText(quartaObjeto.getString("sobremesa"));
+                    }
+                    if(quintaArray.length() > 0){
+                        // Obtém o primeiro elemento do array
+                        JSONObject quintaObjeto = quintaArray.getJSONObject(0);
+                            principal1QuintaLabel.setText(quintaObjeto.getString("opcao1"));
+                            principal2QuintaLabel.setText(quintaObjeto.getString("opcao2"));
+                            vegetarianoQuintaLabel.setText(quintaObjeto.getString("vegana"));
+                            fastQuintaLabel.setText(quintaObjeto.getString("fast_grill"));
+                            sucoQuintaLabel.setText(quintaObjeto.getString("suco"));
+                            sobremesaQuintaLabel.setText(quintaObjeto.getString("sobremesa"));
+                    }
+                    if(sextaArray.length() > 0){
+                        // Obtém o primeiro elemento do array
+                        JSONObject sextaObjeto = sextaArray.getJSONObject(0);
+                            principal1SextaLabel.setText(sextaObjeto.getString("opcao1"));
+                            principal2SextaLabel.setText(sextaObjeto.getString("opcao2"));
+                            vegetarianoSextaLabel.setText(sextaObjeto.getString("vegana"));
+                            fastSextaLabel.setText(sextaObjeto.getString("fast_grill"));
+                            sucoSextaLabel.setText(sextaObjeto.getString("suco"));
+                            sobremesaSextaLabel.setText(sextaObjeto.getString("sobremesa"));
+                    }
+                    
+                    
                 }
             }
                
@@ -213,7 +262,7 @@ public class TelaCardapioController {
 
 
 
-
+        /* 
         System.out.println(cbTipo.getValue());
     	int i=Controlador.getInstance().indexSemanaCardapio(LocalDate.now(),cbTipo.getValue());
         if(i!=-1) {
@@ -300,6 +349,7 @@ public class TelaCardapioController {
             	info.setContentText("O Cardápio de jantar não está disponivel para essa semana");
             info.show();
         }
+        */
     
     }
     
@@ -321,7 +371,8 @@ public class TelaCardapioController {
             scene = new Scene(root);
             stage.setScene(scene);
             stage.show();
-            stage.setTitle("Tela inicial");
+            stage.setTitle("Tela Inicial");
+
         }
     }
 

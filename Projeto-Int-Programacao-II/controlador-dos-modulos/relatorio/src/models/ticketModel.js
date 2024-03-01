@@ -15,14 +15,14 @@ const consumidos = async (dataInicio, dataFim) => {
         const [resultJanta] = await connection.execute(queryJanta, [dataInicio, dataFim]);
 
         // Extrair os resultados das consultas
-        const almocosConsumidos = resultAlmoco[0].almocos_consumidos;
-        const jantasConsumidas = resultJanta[0].jantas_consumidas;
+        const almocos = resultAlmoco[0].almocos_consumidos;
+        const jantas = resultJanta[0].jantas_consumidas;
 
         // Retornar o resultado
-        return { almocosConsumidos, jantasConsumidas };
+        return { almocos, jantas };
     } catch (error) {
         // Lidar com erros
-        console.error('Erro ao obter a quantidade de tickets consumidos:', error);
+        console.error("Erro ao obter a quantidade de tickets consumidos:", error);
         throw error;
     }
 };
@@ -31,7 +31,7 @@ const consumidos = async (dataInicio, dataFim) => {
 const vendidos = async (dataInicio, dataFim) => {
     try {
         // Consulta para obter todos os tickets de almoço vendidos entre as datas especificadas
-        const queryAlmoco = 'SELECT * FROM ticket_refeicao WHERE tipo = "almoco" AND data_venda BETWEEN ? AND ?';
+        const queryAlmoco = 'SELECT * FROM ticket_refeicao WHERE tipo = "almoço" AND data_venda BETWEEN ? AND ?';
 
         // Consulta para obter todos os tickets de janta vendidos entre as datas especificadas
         const queryJanta = 'SELECT * FROM ticket_refeicao WHERE tipo = "janta" AND data_venda BETWEEN ? AND ?';
@@ -48,7 +48,7 @@ const vendidos = async (dataInicio, dataFim) => {
         return { almocos, jantas };
     } catch (error) {
         // Lidar com erros
-        console.error('Erro ao obter os tickets vendidos:', error);
+        console.error("Erro ao obter os tickets vendidos:", error);
         throw error;
     }
 };
@@ -58,4 +58,4 @@ module.exports ={
     consumidos,
     vendidos
    
-};
+}

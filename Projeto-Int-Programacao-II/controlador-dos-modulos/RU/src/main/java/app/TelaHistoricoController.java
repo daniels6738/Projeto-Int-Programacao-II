@@ -19,7 +19,6 @@ import javafx.stage.Stage;
 import models.Estudante;
 import models.Funcionario;
 import negocio.Controlador;
-import negocio.UserAtual;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -173,14 +172,14 @@ public class TelaHistoricoController {
 
     @FXML
     protected void botaoVoltar(ActionEvent event) throws IOException {
-        if (UserAtual.getInstance().gettipoUser()==1) {
+        if (Controlador.getInstance().getUsuario() instanceof Estudante) {
             root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("TelaAluno.fxml")));
             stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             scene = new Scene(root);
             stage.setScene(scene);
             stage.show();
             stage.setTitle("Tela Inicial");
-        } else if (UserAtual.getInstance().gettipoUser()==2) {
+        } else if (Controlador.getInstance().getUsuario() instanceof Funcionario) {
             root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("TelaFuncionario.fxml")));
             stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             scene = new Scene(root);

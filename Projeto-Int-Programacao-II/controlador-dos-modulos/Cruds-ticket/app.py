@@ -8,7 +8,7 @@ def conectar_bd():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="didinho",
+        password="lLAWLIET0",
         database="ru"
     )
 

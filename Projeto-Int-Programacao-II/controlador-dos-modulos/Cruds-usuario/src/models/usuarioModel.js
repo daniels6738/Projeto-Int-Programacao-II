@@ -1,5 +1,3 @@
-/* eslint-disable no-redeclare */
-/* eslint-disable no-unused-vars */
 const connection = require('./connection');
 const auth = require('../utils/auth');
 const bcrypt = require('bcrypt');
@@ -75,13 +73,13 @@ const sigUp = async (usuario) => {
     const [usuarioExiste] = await connection.execute('SELECT * FROM usuario WHERE cpf = ?',[cpf]);
 
     if(usuarioExiste.length > 0){
-        return {erro: 'cpf já existe'};
+        return {erro: "cpf já existe"};
     }
 
    
-    // const senhaHash = await auth.criptografarSenha(senha);
-    // const id = uuidv4();
-    // var token = auth.gerarToken({id,email});
+   // const senhaHash = await auth.criptografarSenha(senha);
+   // const id = uuidv4();
+   // var token = auth.gerarToken({id,email});
     var query = 'INSERT INTO usuario ( nome, cpf, data_nascimento, email, senha, dia_cadastro) VALUES (?, ?, ?, ?, ?, now())';
   
     const [novoUsuario] = await connection.execute(query,[nome,cpf, data_nascimento, email, senha]);
@@ -90,27 +88,27 @@ const sigUp = async (usuario) => {
         var query = 'INSERT INTO estudante (cpf, matricula) VALUES (?, ?)';
         const [userAluno] = await connection.execute(query,[cpf,matricula]);
         var aluno = {...userAluno[0]};
-        return {mensagem:'aluno cadastrado com sucesso'};
+        return {mensagem:"aluno cadastrado com sucesso"};
         
     } else{
-        var query = 'INSERT INTO funcionario (cpf, salario, data_admin) VALUES (?, ?, ?)';
+        var query = 'INSERT INTO funcionario (cpf, salario, data_admin) VALUES (?, ?, ?)'
         const [userfuncionario] = await connection.execute(query,[cpf, salario, data_admin]);
-        // var funcionario = {...userfuncionario[0]};
-        return {mensagem: 'funcionario cadastrado com sucesso'};
+       // var funcionario = {...userfuncionario[0]};
+        return {mensagem: "funcionario cadastrado com sucesso"};
     }        
     
 };
 
 const deleteUser = async (cpf) => {
 
-    const user = buscarUsuario(cpf);
-    if(user == null){
-        return {erro:'usuario não encontrado'};
-    } else{
-        var query = 'DELETE FROM usuario WHERE cpf = ?';
-        await connection.execute(query, [cpf]);
-        return { mensagem: 'Usuário excluído com sucesso' };
-    }
+  const user = buscarUsuario(cpf);
+  if(user == null){
+    return {erro:'usuario não encontrado'};
+  } else{
+    var query = 'DELETE FROM usuario WHERE cpf = ?';
+    await connection.execute(query, [cpf]);
+    return { mensagem: 'Usuário excluído com sucesso' };
+  }
 
 };
 
@@ -133,7 +131,7 @@ const ediUser = async (usuario) => {
 
         var query = 'UPDATE usuario SET nome = ?, data_nascimento = ?, email = ?, senha = ? WHERE cpf = ?';
         await connection.execute(query, [nome, data_nascimento, email, senha, cpf]); // Adicionando await aqui
-        return { mensagem: 'usuario atualizado' };
+        return { mensagem: "usuario atualizado" };
     }
 };
 
@@ -144,4 +142,4 @@ module.exports ={
     buscarUsuario,
     deleteUser,
     ediUser
-};
+}

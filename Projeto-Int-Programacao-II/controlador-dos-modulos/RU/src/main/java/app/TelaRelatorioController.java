@@ -2,8 +2,6 @@ package app;
 
 import exceptions.DataInvalidaException;
 import exceptions.PeriodoInvalidoException;
-import javafx.beans.property.ReadOnlyStringWrapper;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -83,14 +81,14 @@ public class TelaRelatorioController {
     protected void btnRelatorioV() {
         LocalDate inicio = dtInicioV.getValue();
         LocalDate fim = dtFimV.getValue();
-        System.out.println("data 1: " + inicio + "\n data 2: " + fim);
+        DateTimeFormatter form = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
         try {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:3330/relatorio/vendidos"))
+                    .uri(URI.create("http://localhost:3330/relatorio/venda"))
                     .header("Content-Type", "application/json")
-                    .POST(HttpRequest.BodyPublishers.ofString("{\"data1\": \"" + inicio + "\", \"data2\": \"" + fim + "\"}"))
+                    .POST(HttpRequest.BodyPublishers.ofString("{\"inicio\": \"" + inicio + "\", \"fim\": \"" + fim + "\"}"))
                     .build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -109,11 +107,12 @@ public class TelaRelatorioController {
                     vendas.add(new ArrayList<>(Arrays.asList(Arrays.asList(dataVenda, String.valueOf(almoco), String.valueOf(jantar)))));
                 }
                 tbVendas.setItems(vendas);
-                clnDataV.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().get(0).get(0)));
-                clnAlmocoV.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().get(0).get(1)));
-                clnJantarV.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().get(0).get(2)));
+                clnDataV.setCellValueFactory(cellData -> cellData.getValue().get(0).get(0));
+                clnAlmocoV.setCellValueFactory(cellData -> cellData.getValue().get(0).get(1));
+                clnJantarV.setCellValueFactory(cellData -> cellData.getValue().get(0).get(2));
             } else {
-                System.out.println("Erro ao recuperar relatorio");
+                // Tratar erro
+                // Exibir mensagem de erro
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -129,17 +128,15 @@ public class TelaRelatorioController {
         try {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:3330/relatorio/consumidos"))
+                    .uri(URI.create("http://localhost:3330/relatorio/consumo"))
                     .header("Content-Type", "application/json")
-                    .POST(HttpRequest.BodyPublishers.ofString("{\"data1\": \"" + inicio + "\", \"data2\": \"" + fim + "\"}"))
+                    .POST(HttpRequest.BodyPublishers.ofString("{\"inicio\": \"" + inicio + "\", \"fim\": \"" + fim + "\"}"))
                     .build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
             if (response.statusCode() == 200) {
                 JSONObject jsonResponse = new JSONObject(response.body());
-                int almocos = jsonResponse.getInt("almocosConsumidos");
-                int jantas = jsonResponse.getInt("jantasConsumidas");
                 JSONArray data = jsonResponse.getJSONArray("data");
                 ObservableList<List<List<String>>> consumos = tbConsumo.getItems();
                 consumos.clear();
@@ -152,9 +149,9 @@ public class TelaRelatorioController {
                     consumos.add(new ArrayList<>(Arrays.asList(Arrays.asList(dataConsumo, String.valueOf(almoco), String.valueOf(jantar)))));
                 }
                 tbConsumo.setItems(consumos);
-                clnDataC.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().get(0).get(0)));
-                clnAlmocoC.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().get(0).get(1)));
-                clnJantarC.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().get(0).get(2)));
+                clnDataC.setCellValueFactory(cellData -> cellData.getValue().get(0).get(0));
+                clnAlmocoC.setCellValueFactory(cellData -> cellData.getValue().get(0).get(1));
+                clnJantarC.setCellValueFactory(cellData -> cellData.getValue().get(0).get(2));
             } else {
                 // Tratar erro
                 // Exibir mensagem de erro

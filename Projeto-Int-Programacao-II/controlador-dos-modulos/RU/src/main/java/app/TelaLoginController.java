@@ -1,5 +1,6 @@
 package app;
 
+import exceptions.LoginInvalidoException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -10,6 +11,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import models.Estudante;
 import negocio.Controlador;
 import negocio.UserAtual;
 
@@ -50,8 +52,14 @@ public class TelaLoginController {
         String cpf = CPFTextField.getText();
         String senha = senhaPasswordField.getText();
 
+
+
+
         // Cria um cliente HTTP
         HttpClient client = HttpClient.newHttpClient();
+
+        // Obtém o tempo de início da requisição
+        long startTime = System.currentTimeMillis();
         // Cria a requisição HTTP para a rota de login da API
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("http://localhost:3330/usuario/login"))
@@ -62,6 +70,15 @@ public class TelaLoginController {
         try {
             // Envia a requisição para a API e obtém a resposta
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+             // Obtém o tempo de fim da requisição
+        long endTime = System.currentTimeMillis();
+        
+        // Calcula o tempo de resposta
+        long responseTime = endTime - startTime;
+        
+        // Imprime o tempo de resposta no console
+        System.out.println("Tempo de resposta da solicitação: " + responseTime + " milissegundos");
             // Verifica se a resposta da API indica um login válido
             if (response.statusCode() == 200) {
 

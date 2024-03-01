@@ -11,6 +11,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
+import models.Estudante;
+import models.Funcionario;
+import models.TipoRefeicao;
+import negocio.Controlador;
 import negocio.UserAtual;
 
 import java.io.IOException;
@@ -45,16 +49,27 @@ public class TelaCompraController {
          try {
             HttpClient client = HttpClient.newHttpClient();
             String cpf = UserAtual.getInstance().getCpf();
+
+            long startTime = System.currentTimeMillis();
     
             // Requisição para obter a quantidade de almoços não consumidos
             HttpRequest requestAlmoco = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:3330/ticket/naoConsumidos"))
+                    .uri(URI.create("http://localhost:3333/ticket/naoConsumidos"))
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString("{\"usuario\": \"" + cpf + "\", \"tipo\": \"almoço\"}"))
                     .build();
     
             // Envia a requisição e obtém a resposta
             HttpResponse<String> responseAlmoco = client.send(requestAlmoco, HttpResponse.BodyHandlers.ofString());
+
+                         // Obtém o tempo de fim da requisição
+            long endTime = System.currentTimeMillis();
+        
+            // Calcula o tempo de resposta
+             long responseTime = endTime - startTime;
+        
+            // Imprime o tempo de resposta no console
+            System.out.println("Tempo de resposta da solicitação: " + responseTime + " milissegundos");
     
             // Verifica se a resposta foi bem-sucedida e atualiza o label com a quantidade de almoços não consumidos
             if (responseAlmoco.statusCode() == 200) {
@@ -67,7 +82,7 @@ public class TelaCompraController {
     
             // Requisição para obter a quantidade de jantas não consumidas
             HttpRequest requestJanta = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:3330/ticket/naoConsumidos"))
+                    .uri(URI.create("http://localhost:3333/ticket/naoConsumidos"))
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString("{\"usuario\": \"" + cpf + "\", \"tipo\": \"janta\"}"))
                     .build();
@@ -103,7 +118,7 @@ public class TelaCompraController {
             
             // Requisição para almoço não consumido
             HttpRequest requestAlmoco = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:3330/ticket/comprar"))
+                    .uri(URI.create("http://localhost:3333/ticket/comprar"))
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString("{\"usuario\": \"" + cpf + "\", \"tipo\": \"" + tipoAlmoco + "\"}"))
                     .build();

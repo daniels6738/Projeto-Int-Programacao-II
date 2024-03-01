@@ -4,6 +4,7 @@ const axios = require('axios');
 
 const cadastrar_cardapio = async (req, res) => {
     const { data_inicio, tipo, opcao_segunda, opcao_terca, opcao_quarta, opcao_quinta, opcao_sexta } = req.body;
+    
 
     // Verificar se as opções fornecidas existem antes de cadastrar o cardápio
     try {
@@ -33,8 +34,13 @@ const cadastrar_cardapio = async (req, res) => {
 
 const buscar_cardapio = async (req, res) => {
     const { data_inicio, tipo } = req.body;
+    var tipo1;
+      if(tipo === "JANTAR" || tipo === "janta")
+      tipo1 = "janta";
+    else tipo1 = "almoço"
+
     try {
-        const cardapio = await cardapioModel.buscar_cardapio(data_inicio, tipo);
+        const cardapio = await cardapioModel.buscar_cardapio(data_inicio, tipo1);
         console.log(cardapio);
         //verifica se deu erro
         if('erro' in cardapio){
@@ -86,7 +92,7 @@ const editar_cardapio =async (req,res) =>{
     }
 };
 
-// Função para buscar opção através da rota http://localhost:3337/opcao/buscar
+// Função para buscar opção através da rota http://localhost:3330/opcao/buscar
 const buscar_opcao = async (opcaoId) => {
     try {
         const response = await axios.post('http://localhost:3337/opcao/buscar', { codigo: opcaoId });
