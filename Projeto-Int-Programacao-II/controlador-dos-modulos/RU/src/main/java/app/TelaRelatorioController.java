@@ -2,6 +2,8 @@ package app;
 
 import exceptions.DataInvalidaException;
 import exceptions.PeriodoInvalidoException;
+import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -107,9 +109,9 @@ public class TelaRelatorioController {
                     vendas.add(new ArrayList<>(Arrays.asList(Arrays.asList(dataVenda, String.valueOf(almoco), String.valueOf(jantar)))));
                 }
                 tbVendas.setItems(vendas);
-                clnDataV.setCellValueFactory(cellData -> cellData.getValue().get(0).get(0));
-                clnAlmocoV.setCellValueFactory(cellData -> cellData.getValue().get(0).get(1));
-                clnJantarV.setCellValueFactory(cellData -> cellData.getValue().get(0).get(2));
+                clnDataV.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().get(0).get(0)));
+                clnAlmocoV.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().get(0).get(1)));
+                clnJantarV.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().get(0).get(2)));
             } else {
                 // Tratar erro
                 // Exibir mensagem de erro
@@ -149,9 +151,9 @@ public class TelaRelatorioController {
                     consumos.add(new ArrayList<>(Arrays.asList(Arrays.asList(dataConsumo, String.valueOf(almoco), String.valueOf(jantar)))));
                 }
                 tbConsumo.setItems(consumos);
-                clnDataC.setCellValueFactory(cellData -> cellData.getValue().get(0).get(0));
-                clnAlmocoC.setCellValueFactory(cellData -> cellData.getValue().get(0).get(1));
-                clnJantarC.setCellValueFactory(cellData -> cellData.getValue().get(0).get(2));
+                clnDataC.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().get(0).get(0)));
+                clnAlmocoC.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().get(0).get(1)));
+                clnJantarC.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().get(0).get(2)));
             } else {
                 // Tratar erro
                 // Exibir mensagem de erro
