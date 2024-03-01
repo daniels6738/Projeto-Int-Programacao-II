@@ -1,3 +1,5 @@
+/* eslint-disable no-redeclare */
+/* eslint-disable no-unused-vars */
 const connection = require('./connection');
 const auth = require('../utils/auth');
 const bcrypt = require('bcrypt');
@@ -91,7 +93,7 @@ const sigUp = async (usuario) => {
         return {mensagem:'aluno cadastrado com sucesso'};
         
     } else{
-        var query = 'INSERT INTO funcionario (cpf, salario, data_admin) VALUES (?, ?, ?)'
+        var query = 'INSERT INTO funcionario (cpf, salario, data_admin) VALUES (?, ?, ?)';
         const [userfuncionario] = await connection.execute(query,[cpf, salario, data_admin]);
         // var funcionario = {...userfuncionario[0]};
         return {mensagem: 'funcionario cadastrado com sucesso'};
@@ -142,4 +144,4 @@ module.exports ={
     buscarUsuario,
     deleteUser,
     ediUser
-}
+};
