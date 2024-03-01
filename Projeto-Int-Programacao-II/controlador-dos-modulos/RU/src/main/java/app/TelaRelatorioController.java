@@ -138,6 +138,8 @@ public class TelaRelatorioController {
 
             if (response.statusCode() == 200) {
                 JSONObject jsonResponse = new JSONObject(response.body());
+                int almocos = jsonResponse.getInt("almocosConsumidos");
+                int jantas = jsonResponse.getInt("jantasConsumidas");
                 JSONArray data = jsonResponse.getJSONArray("data");
                 ObservableList<List<List<String>>> consumos = tbConsumo.getItems();
                 consumos.clear();
