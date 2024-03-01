@@ -16,10 +16,18 @@ import models.Estudante;
 import models.Funcionario;
 import models.TipoRefeicao;
 import negocio.Controlador;
+import negocio.UserAtual;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.time.LocalDate;
 import java.util.Objects;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class TelaCardapioController {
     private Stage stage;
@@ -137,10 +145,79 @@ public class TelaCardapioController {
     }
     @FXML
     private  void iniciarCardapio(ActionEvent event){
-    
+     
+        try {
+            
+            LocalDate dataAtual = LocalDate.now();
+            
+           
+            
+
+            HttpClient client = HttpClient.newHttpClient();
+            
+            // Requisição para almoço não consumido
+            HttpRequest requestCardapio = HttpRequest.newBuilder()
+                    .uri(URI.create("http://localhost:3330/cardapio/buscar"))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString("{\"data_inicio\": \"" + dataAtual + "\", \"tipo\": \"" + cbTipo.getValue() + "\"}"))
+                    .build();
+
+             // Envia a requisição para a API e obtém a resposta para o almoço
+             HttpResponse<String> responseCardapio = client.send(requestCardapio, HttpResponse.BodyHandlers.ofString());
+             // Verifica se a resposta da API indica um login válido para o almoço
+             System.out.println("entrou primeiro");
+             if (responseCardapio.statusCode() == 200) {
+                principal1SegundaLabel.setText("");
+           JSONObject jsonObject = new JSONObject(responseCardapio.body());
+
+            // Verifica se no corpo de resposta tem o campo "opcoes"
+            if(jsonObject.has("opcoes")){
+                JSONObject opcoes = jsonObject.getJSONObject("opcoes");
+                
+                // Verifica se no corpo de resposta tem o campo "segunda"
+                if(opcoes.has("segunda")){
+                    // Obtém o array de opções para segunda-feira
+                    JSONArray segundaArray = opcoes.getJSONArray("segunda");
+                    
+                    // Verifica se o array possui elementos
+                    if(segundaArray.length() > 0){
+                        // Obtém o primeiro elemento do array
+                        JSONObject segundaObjeto = segundaArray.getJSONObject(0);
+                        
+                        // Verifica se o objeto possui o campo "opcao1"
+                        if(segundaObjeto.has("opcao1")){
+                            // Obtém o valor do campo "opcao1"
+                            String opcao1Segunda = segundaObjeto.getString("opcao1");
+                            
+                            // Imprime o valor de "opcao1" no console
+                            System.out.println(opcao1Segunda);
+                            principal1SegundaLabel.setText(opcao1Segunda);
+                            
+                            // Assuma que principal1SegundaLabel é um componente de interface gráfica onde você deseja exibir o valor
+                            // principal1SegundaLabel.setText(opcao1Segunda);
+                        }
+                    }
+                }
+            }
+               
+            }
+            
+
+        } catch (IOException | InterruptedException e) {
+            Alert info = new Alert(Alert.AlertType.ERROR);
+            info.setTitle("Erro");
+            info.setContentText("Desculpe! Tente novamente!");
+            info.show();
+            e.printStackTrace();
+        }
+
+
+
+
+        System.out.println(cbTipo.getValue());
     	int i=Controlador.getInstance().indexSemanaCardapio(LocalDate.now(),cbTipo.getValue());
         if(i!=-1) {
-    	principal1SegundaLabel.setText(Controlador.getInstance().listarCardapioSemanal().get(i).getCardapio().get(DiasDaSemana.SEGUNDA).getOpcao1());
+    	//principal1SegundaLabel.setText(Controlador.getInstance().listarCardapioSemanal().get(i).getCardapio().get(DiasDaSemana.SEGUNDA).getOpcao1());
     	principal2SegundaLabel.setText(Controlador.getInstance().listarCardapioSemanal().get(i).getCardapio().get(DiasDaSemana.SEGUNDA).getOpcao2());
     	fastSegundaLabel.setText(Controlador.getInstance().listarCardapioSemanal().get(i).getCardapio().get(DiasDaSemana.SEGUNDA).getFastGrill());
     	vegetarianoSegundaLabel.setText(Controlador.getInstance().listarCardapioSemanal().get(i).getCardapio().get(DiasDaSemana.SEGUNDA).getOpcaoVegana());
@@ -177,7 +254,7 @@ public class TelaCardapioController {
         }
         else {
         	
-        	principal1SegundaLabel.setText("");
+        	//principal1SegundaLabel.setText("");
         	principal1TercaLabel.setText("");
         	principal1QuartaLabel.setText("");
         	principal1QuintaLabel.setText("");

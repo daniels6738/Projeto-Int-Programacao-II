@@ -64,7 +64,7 @@ def listar_ticket():
     return jsonify(lista), 200
 
 # Rota para listar tickets
-@app.route('/ticket/noaConsumidos', methods=['POST'])
+@app.route('/ticket/naoConsumidos', methods=['POST'])
 
 def listar_ticketConsumidos():
 

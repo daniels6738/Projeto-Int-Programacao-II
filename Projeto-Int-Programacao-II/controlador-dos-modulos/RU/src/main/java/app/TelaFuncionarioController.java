@@ -75,7 +75,7 @@ public class TelaFuncionarioController {
             if (responseAlmoco.statusCode() == 200) {
                 JSONObject jsonObjectAlmoco = new JSONObject(responseAlmoco.body());
                 int qtdAlmoco = jsonObjectAlmoco.getInt("total");
-                labelQtdAlmoco.setText("Almoços não consumidos: " + qtdAlmoco);
+                labelQtdAlmoco.setText(labelQtdAlmoco.getText() + qtdAlmoco);
             } else {
                 labelQtdAlmoco.setText("Erro ao obter quantidade de almoços não consumidos");
             }
@@ -94,7 +94,7 @@ public class TelaFuncionarioController {
             if (responseJanta.statusCode() == 200) {
                 JSONObject jsonObjectJanta = new JSONObject(responseJanta.body());
                 int qtdJanta = jsonObjectJanta.getInt("total");
-                labelQtdAlmoco.setText("Jantas não consumidas: " + qtdJanta);
+                labelQtdJantar.setText(labelQtdJantar.getText() + qtdJanta);
             } else {
                 labelQtdJantar.setText("Erro ao obter quantidade de jantas não consumidas");
             }
