@@ -83,14 +83,14 @@ public class TelaRelatorioController {
     protected void btnRelatorioV() {
         LocalDate inicio = dtInicioV.getValue();
         LocalDate fim = dtFimV.getValue();
-        DateTimeFormatter form = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        System.out.println("data 1: " + inicio + "\n data 2: " + fim);
 
         try {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:3330/relatorio/venda"))
+                    .uri(URI.create("http://localhost:3330/relatorio/vendidos"))
                     .header("Content-Type", "application/json")
-                    .POST(HttpRequest.BodyPublishers.ofString("{\"inicio\": \"" + inicio + "\", \"fim\": \"" + fim + "\"}"))
+                    .POST(HttpRequest.BodyPublishers.ofString("{\"data1\": \"" + inicio + "\", \"data2\": \"" + fim + "\"}"))
                     .build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -113,8 +113,7 @@ public class TelaRelatorioController {
                 clnAlmocoV.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().get(0).get(1)));
                 clnJantarV.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().get(0).get(2)));
             } else {
-                // Tratar erro
-                // Exibir mensagem de erro
+                System.out.println("Erro ao recuperar relatorio");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -130,9 +129,9 @@ public class TelaRelatorioController {
         try {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:3330/relatorio/consumo"))
+                    .uri(URI.create("http://localhost:3330/relatorio/consumidos"))
                     .header("Content-Type", "application/json")
-                    .POST(HttpRequest.BodyPublishers.ofString("{\"inicio\": \"" + inicio + "\", \"fim\": \"" + fim + "\"}"))
+                    .POST(HttpRequest.BodyPublishers.ofString("{\"data1\": \"" + inicio + "\", \"data2\": \"" + fim + "\"}"))
                     .build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
